@@ -11,7 +11,7 @@ tags: ["intro"]
 
 _Image from “Show your work”, by Austin Kleon_
 
-## Short history about myself
+## Short story about myself
 
 When I was a teenager I wanted to be a writer. I remember I read a ton of literature. I started a blog and I even participated as a co-author on an anthology of stories published in the city I grew up. But then I started studying software engineering. In parallel, I wrote some articles on Medium in order to try to merge technology and literature/books but, as days went by, my time was getting more and more scarce. I got graduated, I started my journey as a developer, I felt in love with my professional life and I never looked back.
 
