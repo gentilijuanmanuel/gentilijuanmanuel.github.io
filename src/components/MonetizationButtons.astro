@@ -1,0 +1,26 @@
+---
+import { MONETIZATION_LINKS } from "@/data/constants";
+---
+
+<div class="flex flex-col items-center space-y-6">
+	<script
+		type="text/javascript"
+		src={MONETIZATION_LINKS.buyMeACoffee.scriptSource}
+		data-name={MONETIZATION_LINKS.buyMeACoffee.name}
+		data-slug={MONETIZATION_LINKS.buyMeACoffee.slug}
+		data-color={MONETIZATION_LINKS.buyMeACoffee.color}
+		data-emoji={MONETIZATION_LINKS.buyMeACoffee.emoji}
+		data-font={MONETIZATION_LINKS.buyMeACoffee.font}
+		data-text={MONETIZATION_LINKS.buyMeACoffee.text}
+		data-outline-color={MONETIZATION_LINKS.buyMeACoffee.outlineColor}
+		data-font-color={MONETIZATION_LINKS.buyMeACoffee.fontColor}
+		data-coffee-color={MONETIZATION_LINKS.buyMeACoffee.coffeeColor}
+	></script>
+	<a href={MONETIZATION_LINKS.cafecito.url} rel="noopener" target="_blank">
+		<img
+			srcset=`${MONETIZATION_LINKS.cafecito.images.small} 1x, ${MONETIZATION_LINKS.cafecito.images.medium} 2x, ${MONETIZATION_LINKS.cafecito.images.big} 3.75x`
+			src={MONETIZATION_LINKS.cafecito.images.xBig}
+			alt={MONETIZATION_LINKS.cafecito.alternativeText}
+		/>
+	</a>
+</div>
