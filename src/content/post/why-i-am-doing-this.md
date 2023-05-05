@@ -7,7 +7,8 @@ tags: ["intro"]
 
 # Intro: why I’m doing this?
 
-![Image from “Show your work”, by Austin Kleon](https://file.notion.so/f/s/8075d49d-353c-4409-a57e-e095c2fa6601/showyourworkkleon2.webp?id=232f38cb-2b1b-4f6c-b8e6-1daa83640aae&table=block&spaceId=8c66025b-e313-472c-aef1-abf0dd9093d7&expirationTimestamp=1682896316569&signature=CaAjcp9JTMhM-TPTY2lHB9SADEh2_agRxXQhdHeyFMs&downloadName=showyourworkkleon2.webp)
+<!-- ![Image from “Show your work”, by Austin Kleon](/posts/post-1/why-im-doing-this.jpg) -->
+<img src="/why-im-doing-this.jpg" alt="Image from “Show your work”, by Austin Kleon">
 
 _Image from “Show your work”, by Austin Kleon_
 
