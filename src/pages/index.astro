@@ -13,14 +13,19 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
 
 <PageLayout meta={{ title: "Home" }}>
 	<section>
-		<h1 class="title mb-6">Welcome</h1>
+		<h1 class="title mb-6">
+			Life isn’t about finding yourself, or finding anything. Life is about creating yourself, and
+			creating things - Bob Dylan
+		</h1>
 		<p class="mb-4">
-			Hi, I'm a software engineer and iOS developer currently living in 🇦🇷 and working for
-			<a class="sm:hover:underline" href={WORK_LINKS.venmo} target="_blank">Venmo</a>.
-			This is my tiny and simple space in which I share my thoughts about everything I like to write about in the form of blog posts.
+			Hi, I'm a software engineer and iOS developer currently living in 🇦🇷 and working @
+			<a class="sm:hover:underline" href={WORK_LINKS.venmo} target="_blank">Venmo</a>. This is my
+			tiny and simple space in which I share my thoughts about everything I like to write about in
+			the form of blog posts.
 		</p>
 		<p>
-			Common topics you'll find here: development, startups, finances, crypto/web3, economy, UX/UI, productivity, climate change, physical and mental health, reading, fitness, science, and more.
+			Common topics you'll find here: development, startups, finances, crypto/web3, economy, UX/UI,
+			productivity, climate change, physical and mental health, reading, fitness, science, and more.
 		</p>
 		<SocialList />
 	</section>

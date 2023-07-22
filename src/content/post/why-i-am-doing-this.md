@@ -5,10 +5,7 @@ publishDate: "29 April 2023"
 tags: ["intro"]
 ---
 
-# Intro: why I’m doing this?
-
-<!-- ![Image from “Show your work”, by Austin Kleon](/posts/post-1/why-im-doing-this.jpg) -->
-<img src="/why-im-doing-this.jpg" alt="Image from “Show your work”, by Austin Kleon">
+<img src="/why-im-doing-this.png" alt="Image from “Show your work”, by Austin Kleon">
 
 _Image from “Show your work”, by Austin Kleon_
 
