@@ -23,7 +23,7 @@ I’d like to mention two, and share my learnings and highlights from them.
 - *Build*, by Tony Fadell.
 - *Make*, by Pieter Levels.
 
-I really like the fact that both titles are more or less synonyms. It’s not casualty.
+I really like the fact that both titles are more or less synonyms. It’s not coincidence.
 
 ## Build
 
