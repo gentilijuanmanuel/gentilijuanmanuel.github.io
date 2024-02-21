@@ -116,7 +116,7 @@ class LiveChicagoArtInstituteService: ChicagoArtInstituteService {
 	}
 }
 
-// MARKL Test implementation
+// MARK: Test implementation
 
 class MockChicagoArtInstituteService: ChicagoArtInstituteService {
 	func fetchArtworks() async throws -> ArtworkResponse {
