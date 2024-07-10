@@ -2,7 +2,7 @@
 title: "A healthier self"
 description: "An attempt to organize a bunch of thoughts I had on a trip to Brazil"
 publishDate: "09 July 2024"
-tags: ["books", "trips"]
+tags: ["books", "trips", "philosophy"]
 ---
 
 A couple of months ago, I started having chronic headaches. At first, it wasn’t a big problem. When it happened, I just stopped working, took a pill, or went for a run. Then I would return to work refreshed, and that was it.
@@ -159,7 +159,7 @@ And then he states:
 
 Our brain is the bottleneck. Specially for us, workers in the knowledge sector. Func fact related to this: I have a [*cactus cerebro*](https://images.app.goo.gl/mCBquh4zkt7PWv7J6) on my desk. It’s inside a 3D-printed flowerpot shaped like a person reading a book, which is a gift from one of my best friends. The head part is open to let the *"cerebro"* rest in peace. This always reminds me that it’s a living organism. Being able to focus on one thing at a time or setting aside time to think deeply without restrictions or distractions is like watering it regularly and giving it sunlight.
 
-Another excellent description of the problem can be found in [William Deresiewicz](https://theamericanscholar.org/author/william-deresiewicz/), previously mentioned by Jenny Odell in my How to Do Nothing quotes. In [*Solitude and Leadership*](https://theamericanscholar.org/solitude-and-leadership/), he’s sharp about multitasking and the way our society tries to think nowadays:
+Another excellent description of the problem can be found in [William Deresiewicz](https://theamericanscholar.org/author/william-deresiewicz/), previously mentioned by Jenny Odell in my *How to Do Nothing* quotes. In [*Solitude and Leadership*](https://theamericanscholar.org/solitude-and-leadership/), he’s sharp about multitasking and the way our society tries to think nowadays:
 
 > *Multitasking, in short, is not only not thinking, it impairs your ability to think. Thinking means concentrating on one thing long enough to develop an idea about it. Not learning other people’s ideas, or memorizing a body of information, however much those may sometimes be useful. Developing your own ideas. In short, thinking for yourself. You simply cannot do that in bursts of 20 seconds at a time, constantly interrupted by Facebook messages or Twitter tweets, or fiddling with your iPod, or watching something on YouTube.*
 > 
