@@ -17,6 +17,7 @@ export const SOCIAL_LINKS = {
 	github: "https://github.com/gentilijuanmanuel",
 	twitter: "https://twitter.com/jgentilicio",
 	email: "gentilijuanmanuel@gmail.com",
+	medium: "https://medium.com/@jmgentili",
 };
 
 export const WORK_LINKS = {
