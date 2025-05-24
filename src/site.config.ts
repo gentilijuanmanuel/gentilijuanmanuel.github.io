@@ -18,7 +18,7 @@ export const siteConfig: SiteConfig = {
 	// Meta property used to construct the meta title property, found in src/components/BaseHead.astro L:11
 	title: "Juan's blog",
 	// Meta property used as a default description meta property
-	description: "my tiny and simple space in which I share my thoughts about everything I like to write about",
+	description: "This is my little corner of the internet, where I share whatever inspires me in the form of blog posts.",
 	// HTML lang property, found in src/layouts/Base.astro L:18
 	lang: "en-GB",
 	// Meta property, found in src/components/BaseHead.astro L:42
