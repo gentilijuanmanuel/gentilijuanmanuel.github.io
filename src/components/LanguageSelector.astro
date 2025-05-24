@@ -1,0 +1,84 @@
+---
+interface Props {
+  currentLanguage: string;
+}
+
+const { currentLanguage } = Astro.props;
+---
+
+<div class="language-selector">
+  <button 
+    class:list={[
+      "language-btn",
+      { active: currentLanguage === "en" }
+    ]}
+    data-language="en"
+  >
+    English
+  </button>
+  <span class="separator">|</span>
+  <button 
+    class:list={[
+      "language-btn",
+      { active: currentLanguage === "es" }
+    ]}
+    data-language="es"
+  >
+    Spanish
+  </button>
+</div>
+
+<style>
+  .language-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .language-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    color: var(--theme-text-light);
+    transition: color 0.2s ease;
+  }
+
+  .language-btn:hover {
+    color: var(--theme-text);
+  }
+
+  .language-btn.active {
+    color: var(--theme-text);
+    font-weight: 600;
+  }
+
+  .separator {
+    color: var(--theme-text-light);
+    font-size: 0.875rem;
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll('.language-btn');
+  
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const language = button.getAttribute('data-language');
+      if (language) {
+        localStorage.setItem('preferredLanguage', language);
+        
+        // Remove active class from all buttons
+        buttons.forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        // Dispatch event for other components to listen to
+        window.dispatchEvent(new CustomEvent('languageChange', { 
+          detail: { language } 
+        }));
+      }
+    });
+  });
+</script> 

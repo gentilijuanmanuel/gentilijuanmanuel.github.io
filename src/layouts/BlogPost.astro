@@ -4,38 +4,79 @@ import type { CollectionEntry } from "astro:content";
 import BaseLayout from "./Base.astro";
 import BlogHero from "@/components/blog/Hero";
 import MonetizationButtons from "@/components/MonetizationButtons";
+import LanguageSelector from "@/components/LanguageSelector";
 
 interface Props {
 	post: CollectionEntry<"post">;
+	translatedPost: CollectionEntry<"post"> | undefined;
 }
 
-const { post } = Astro.props;
+interface Heading {
+	depth: number;
+	slug: string;
+	text: string;
+}
+
+const { post, translatedPost } = Astro.props;
 const {
-	data: { title, description, ogImage, publishDate },
+	data: { title, description, ogImage, publishDate, language },
 	slug,
 } = post;
 const socialImage = ogImage ?? `/og-image/${slug}.png`;
 const articleDate = publishDate.toISOString();
 const { headings } = await post.render();
+
+// Get the current language from localStorage or default to post's language
+const currentLanguage = language;
 ---
 
-<script>
-	const scrollBtn = document.getElementById("to-top-btn") as HTMLButtonElement;
-	const targetHeader = document.getElementById("blog-hero") as HTMLDivElement;
+<script define:vars={{ currentLanguage, slug, translatedPost, language }}>
+	// Initialize language from localStorage or default to post's language
+	const savedLanguage = localStorage.getItem('preferredLanguage') || currentLanguage;
+	document.documentElement.lang = savedLanguage;
+	
+	// Update language when changed
+	window.addEventListener('languageChange', (event => {
+		const newLanguage = event.detail.language;
+		console.log('Language change event received:', { newLanguage, currentLanguage, translatedPost });
+		document.documentElement.lang = newLanguage;
+		
+		// If we have a translated post and the language is different from current post,
+		// redirect to the translated post
+		if (translatedPost && newLanguage !== language) {
+			console.log('Redirecting to translated post:', translatedPost.slug);
+			window.location.href = `/posts/${translatedPost.slug}`;
+		} else if (!translatedPost && newLanguage === language) {
+			console.log('Redirecting to current post:', slug);
+			window.location.href = `/posts/${slug}`;
+		} else {
+			// If no translation is available, just update the language
+			console.log('No translation available, updating language only');
+			document.documentElement.lang = newLanguage;
+		}
+	}));
 
-	function callback(entries: IntersectionObserverEntry[]) {
-		entries.forEach((entry) => {
-			// only show the scroll to top button when the heading is out of view
-			scrollBtn.dataset.show = (!entry.isIntersecting).toString();
-		});
-	}
+	// Initialize scroll to top button
+	document.addEventListener('DOMContentLoaded', () => {
+		const scrollBtn = document.getElementById("to-top-btn");
+		const targetHeader = document.getElementById("blog-hero");
 
-	scrollBtn.addEventListener("click", () => {
-		document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+		if (scrollBtn && targetHeader) {
+			function callback(entries) {
+				entries.forEach((entry) => {
+					// only show the scroll to top button when the heading is out of view
+					scrollBtn.dataset.show = (!entry.isIntersecting).toString();
+				});
+			}
+
+			scrollBtn.addEventListener("click", () => {
+				document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+			});
+
+			const observer = new IntersectionObserver(callback);
+			observer.observe(targetHeader);
+		}
 	});
-
-	const observer = new IntersectionObserver(callback);
-	observer.observe(targetHeader);
 </script>
 
 <BaseLayout meta={{ title, description, articleDate, ogImage: socialImage }}>
@@ -45,7 +86,7 @@ const { headings } = await post.render();
 				<aside class="sticky top-20 order-2 -me-32 hidden basis-64 lg:block">
 					<h2 class="font-semibold">Table of Contents</h2>
 					<ul class="mt-4 text-xs">
-						{headings.map(({ depth, slug, text }) => (
+						{headings.map(({ depth, slug, text }: Heading) => (
 							<li class="hover:text-accent line-clamp-2">
 								<a
 									class={`block ${depth <= 2 ? "mt-3" : "mt-2 ps-3 text-[0.6875rem]"}`}
@@ -61,7 +102,12 @@ const { headings } = await post.render();
 			)
 		}
 		<article class="flex-grow break-words">
-			<div id="blog-hero"><BlogHero content={post} /></div>
+			<div id="blog-hero">
+				<div class="flex justify-end mb-4">
+					<LanguageSelector currentLanguage={currentLanguage} />
+				</div>
+				<BlogHero content={post} />
+			</div>
 			<div
 				class="prose prose-sm prose-cactus mt-12 prose-headings:font-semibold prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-accent prose-headings:before:content-['#'] prose-th:before:content-none"
 			>

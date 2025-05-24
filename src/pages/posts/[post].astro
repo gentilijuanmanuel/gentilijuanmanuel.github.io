@@ -6,21 +6,26 @@ import PostLayout from "@/layouts/BlogPost";
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 	const posts: CollectionEntry<"post">[] = await getCollection("post");
-	const params = posts.map((post) => ({
-		params: { post: post.slug },
-		props: { post },
-	}));
+	
+	const params = posts.map((post) => {
+		const translatedPost = posts.find(p => p.slug === post.data.translationSlug);
+		return {
+			params: { post: post.slug },
+			props: { post, translatedPost },
+		};
+	});
 	return params;
 }
 
 interface Props {
 	post: CollectionEntry<"post">;
+	translatedPost?: CollectionEntry<"post">;
 }
 
-const { post } = Astro.props;
+const { post, translatedPost } = Astro.props;
 const { Content } = await post.render();
 ---
 
-<PostLayout post={post}>
+<PostLayout post={post} translatedPost={translatedPost}>
 	<Content />
 </PostLayout>
