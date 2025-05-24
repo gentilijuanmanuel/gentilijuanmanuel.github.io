@@ -2,6 +2,7 @@
 import PageLayout from "@/layouts/Base";
 import { Image } from "@astrojs/image/components";
 import profileImg from "../assets/profile-picture.png";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const meta = {
 	title: "About",
@@ -19,59 +20,143 @@ const meta = {
 				loading="eager"
 			/>
 		</div>
-		<h1 class="title">Juan, the engineer</h1>
-		<p>
-			Being able to build <i>something</i> from <i>nothing</i>, going from 0 to 1,
-			felt like magic since the first day he wrote his first line of code
-			(it was a simple <i>"Hello world"</i> on a black terminal, built in Pascal).
-			It's like a Lego, one brick at a time and then, suddenly, you have a castle in front of you.
-			A castle created by you. Which can be used by others.
-			This was the fuel that drove him to learn more and more about this craft.
-		</p>
-		<p>
-			He finished his software engineering studies in 2018 and started working as a mobile developer.
-			His first experiences were with cross-platform technologies such as Xamarin and React Native,
-			but then transitioned to native iOS development using Swift.
-			He fell in love with the language and its clean ecosystem.
-			Since then, he's been focused on increasing and applying his knowledge to develop for Apple platforms.
-		</p>
-		<p>
-			He values working on products he cares about —being both the developer and the end user.
-			That's why he's particularly interested in industries that are part of his day to day life:
-			programming, UX/UI, health & fitness, finances & economy, creative writing, literature, philosophy, science, eLearning, and more.
-		</p>
-		<h1 class="title">Juan, the writer</h1>
-		<p>
-			But the process of creating something from scratch cannot only be done with code.
-			You can also create with <i>words</i>.
-			Plain words in natural language.
-			Words that can express ideas, thoughts, emotions.
-			And those ideas, thoughts and emotions can be shared with others,
-			connecting the author and the reader through the text.
-		</p>
-		<p>
-			His first approach to the world of writing and reading was in childhood.
-			He was lucky to have two parents who were both avid readers, so books were always around him.
-			He doesn't exactly remember if the first book he read was <i>The Little Prince</i> (Saint-Exupéry)
-			or a novel by Gabriel García Márquez (<i>No one writes to the Coronel</i>).
-			He does remember the first piece of fiction he wrote, though:
-			it was a fable that explained the origin of trees.
-			He experienced the same feeling as Juan, the engineer, with the first <i>"Hello world"</i>:
-			from his head emerges a set of symbols that, together,
-			created a castle of meaning in which he can take refuge from the rest of the world.
-		</p>
-		<p>
-			And it feels good.
-		</p>
-		<p>
-			Juan, the writer, didn't follow an academic approach like Juan, the engineer.
-			He just reads and writes whatever he wants, whenever he wants, and wherever he wants.
-			That can lead to some intellectual gaps,
-			but at the same time lets him explore the nature of randomness.
-		</p>
-		<hr />
-		<p>
-			In this blog, you can find both Juans in action. Working together.
-		</p>
+		<div class="flex justify-center mb-6">
+			<LanguageSelector currentLanguage="en" />
+		</div>
+		<div id="about-content-en" class="space-y-6">
+			<h1 class="title">Juan, the engineer</h1>
+			<p>
+				Being able to build <i>something</i> from <i>nothing</i>, going from 0 to 1,
+				was revealing since the day he wrote his first line of code
+				(it was a simple <i>"Hello world"</i> on a black terminal, built in Pascal).
+				Like a Lego: one brick at a time and then, suddenly, you have a castle in front of you.
+				A castle created by you. Which can be used by others.
+			</p>
+			<p>
+				This was the fuel that drove him to learn more and more about this craft.
+			</p>
+			<p>
+				He finished his software engineering studies in 2018 and started working as a mobile developer.
+				His first experiences were with cross-platform technologies such as Xamarin and React Native,
+				but then transitioned to native iOS development using Swift.
+				He fell in love with the language and its clean ecosystem.
+				Since then, he's been focused on increasing and applying his knowledge to develop for Apple platforms.
+			</p>
+			<p>
+				He values ​​working on products to which he can contribute as both a developer and an end user.
+				Products that are integrated into his own life, which revolves around programming,
+				UX/UI, health & fitness, finance & economics, society & politics,
+				creative writing, literature, philosophy, science, eLearning, and more.
+			</p>
+			<h1 class="title">Juan, the writer</h1>
+			<p>
+				But the process of creating something from scratch cannot only be done with code.
+				You can also create with <i>words</i>.
+				Plain words in natural language.
+				Words that can express ideas, thoughts, emotions.
+				And those ideas, thoughts and emotions can be shared with others,
+				connecting the author and the reader through the text.
+			</p>
+			<p>
+				His first approach to the world of writing and reading was in childhood.
+				He was lucky to have two parents who were both avid readers, so books were always around him.
+				He doesn't exactly remember if the first book he read was <i>The Little Prince</i> (Saint-Exupéry)
+				or a novel by Gabriel García Márquez (<i>No one writes to the Coronel</i>).
+				He does remember the first piece of fiction he wrote, though:
+				it was a fable that explained the origin of trees.
+				He experienced the same feeling as Juan, the engineer, with the first <i>"Hello world"</i>:
+				from his head emerges a set of symbols that, together,
+				created a castle of meaning in which he can take refuge from the rest of the world.
+			</p>
+			<p>
+				And it feels good.
+			</p>
+			<p>
+				Juan, the writer, didn't follow an academic approach like Juan, the engineer.
+				He just reads and writes whatever he wants, whenever he wants, and wherever he wants.
+				That can lead to some intellectual gaps,
+				but at the same time lets him explore the nature of randomness.
+			</p>
+			<hr />
+			<p>
+				In this blog, you can find both Juans in action.
+				Working together.
+			</p>
+		</div>
+		<div id="about-content-es" class="space-y-6" style="display:none">
+			<h1 class="title">Juan, el ingeniero</h1>
+			<p>
+				Poder construir <i>algo</i> de la <i>nada</i>, transicionar de 0 a 1,
+				fue revelador desde el día en que escribió su primera línea de código
+				(un simple <i>"Hola mundo"</i> en una terminal negra, creado en Pascal).
+				Como los bloques de Lego: un ladrillo a la vez y, de repente, tenés un castillo en frente tuyo.
+				Un castillo creado por vos.
+				Que otros pueden usar.
+			</p>
+			<p>
+				Este fue el motor que lo impulsó a aprender más sobre el oficio.
+			</p>
+			<p>
+				Terminó sus estudios de ingeniería de software en 2018 y comenzó a trabajar como desarrollador móvil.
+				Sus primeras experiencias fueron con tecnologías multiplataforma como Xamarin y React Native,
+				pero luego migró al desarrollo nativo para iOS con Swift.
+				Se enamoró del lenguaje y su ecosistema limpio.
+				Desde entonces, se ha centrado en ampliar y aplicar sus conocimientos para desarrollar para las plataformas de Apple.
+			</p>
+			<p>
+				Valora trabajar en productos en los cuales puede contribuir como desarrollador y usuario final.
+				Productos que están integrados en su propia vida, que gira en torno a la programación,
+				UX/UI, salud y bienestar, finanzas y economía, sociedad y política,
+				escritura creativa, literatura, filosofía, ciencia, eLearning y más.
+			</p>
+			<h1 class="title">Juan, el escritor</h1>
+			<p>
+				Pero el proceso de crear algo desde cero no solo se puede hacer con código.
+				También se puede crear con <i>palabras</i>.
+				Palabras sencillas en lenguaje natural, que pueden expresar ideas, pensamientos y emociones.
+				Y esas ideas, pensamientos y emociones se pueden compartir con otros,
+				conectando al autor y al lector a través del texto.
+			</p>
+			<p>
+				Su primer acercamiento al mundo de la escritura y la lectura fue en la infancia.
+				Tuvo la suerte de tener dos ávidos lectores de padres:
+				los libros siempre estuvieron a su alrededor.
+				No recuerda exactamente si el primer libro que leyó fue <i>El Principito</i> (Saint-Exupéry)
+				o una novela de Gabriel García Márquez (<i>El Coronel no tiene quien le escriba</i>).
+				Sin embargo, sí recuerda la primera obra de ficción que escribió:
+				una fábula que explicaba el origen de los árboles.
+				Experimentó la misma sensación que Juan, el ingeniero, con el primer <i>"Hola mundo"</i>:
+				de su cabeza emerge un conjunto de símbolos que, juntos,
+				crean un castillo de significado en el que puede refugiarse del resto del mundo.
+			</p>
+			<p>
+				Y eso se siente bien.
+			</p>
+			<p>
+				Juan, el escritor, no siguió un enfoque académico como Juan, el ingeniero.
+				Simplemente lee y escribe lo que quiere, cuando quiere y donde quiere.
+				Esto puede generar algunas lagunas intelectuales,
+				pero al mismo tiempo le permite explorar la naturaleza de la aleatoriedad.
+			</p>
+			<hr />
+			<p>
+				En este blog, puedes encontrar a ambos Juanes en acción.
+				Trabajando juntos.
+			</p>
+		</div>
 	</div>
 </PageLayout>
+
+<script is:inline>
+if (typeof window !== 'undefined') {
+	window.addEventListener('languageChange', (event) => {
+		const lang = event.detail && event.detail.language;
+		const enContent = document.getElementById('about-content-en');
+		const esContent = document.getElementById('about-content-es');
+		if (enContent && esContent && lang) {
+			enContent.style.display = lang === 'en' ? '' : 'none';
+			esContent.style.display = lang === 'es' ? '' : 'none';
+		}
+	});
+}
+</script>
