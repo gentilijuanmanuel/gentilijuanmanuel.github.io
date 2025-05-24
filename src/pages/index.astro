@@ -4,7 +4,7 @@ import PageLayout from "@/layouts/Base";
 import PostPreview from "@/components/blog/PostPreview";
 import SocialList from "@/components/SocialList";
 import { sortMDByDate } from "@/utils";
-import { WORK_LINKS } from "@/data/constants";
+import { READING_LINKS, WORK_LINKS } from "@/data/constants";
 
 const MAX_POSTS = 100;
 const allPosts = await getCollection("post");
@@ -26,7 +26,7 @@ const allPostsByDate = sortMDByDate(englishPosts).slice(0, MAX_POSTS);
 			A random guy who writes, both in natural and programming languages.
 		</p>
 		<p class="mb-4">
-			Currently living in 🇦🇷 and working as an iOS/watchOS engineer @ <a class="sm:hover:underline" href={WORK_LINKS.runna} target="_blank">Runna</a>.
+			Currently living in 🇦🇷 and working as an iOS/watchOS engineer @ <a class="sm:hover:underline" href={WORK_LINKS.runna} target="_blank" rel="noopener noreferrer">Runna</a>.
 		</p>
 		<p class="mb-4">
 			This is my little corner of the internet, where I share whatever inspires me in the form of blog posts.
@@ -43,6 +43,21 @@ const allPostsByDate = sortMDByDate(englishPosts).slice(0, MAX_POSTS);
 					</li>
 				))
 			}
+		</ul>
+	</section>
+	<section aria-label="Reading" class="mt-16">
+		<h2 class="title mb-4 text-xl">Reading</h2>
+		<ul class="space-y-4 sm:space-y-2">
+			<li class="flex flex-col gap-x-2 sm:flex-row">
+				<a 
+					href={READING_LINKS.readwise}
+					target="_blank"
+					class="cactus-link"
+					rel="prefetch"
+				>
+					Join to my Readwise Newsletter and get my latest highlights 📖
+				</a>
+			</li>
 		</ul>
 	</section>
 </PageLayout>

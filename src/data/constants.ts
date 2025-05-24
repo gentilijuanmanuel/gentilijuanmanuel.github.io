@@ -20,6 +20,10 @@ export const SOCIAL_LINKS = {
 	medium: "https://medium.com/@jmgentili",
 };
 
+export const READING_LINKS = {
+	readwise: "https://readwise.io/@juanmanuelgentili",
+};
+
 export const WORK_LINKS = {
 	runna: "https://www.runna.com/",
 };
