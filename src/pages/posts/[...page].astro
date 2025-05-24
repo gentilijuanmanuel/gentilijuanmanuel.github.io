@@ -40,6 +40,8 @@ const paginationProps = {
 		},
 	}),
 };
+
+const englishPosts = page.data.filter((p: any) => p.data.language === 'en');
 ---
 
 <PageLayout meta={meta}>
@@ -48,7 +50,7 @@ const paginationProps = {
 		<section aria-label="Blog post list">
 			<ul class="space-y-8 text-start">
 				{
-					page.data.map((p: any) => (
+					englishPosts.map((p: any) => (
 						<li class="flex flex-col flex-wrap gap-2 sm:flex-row [&_q]:basis-full">
 							<PostPreview post={p} as="h2" withDesc />
 						</li>
