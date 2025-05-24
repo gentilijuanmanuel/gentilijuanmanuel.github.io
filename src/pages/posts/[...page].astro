@@ -48,7 +48,7 @@ const paginationProps = {
 		<section aria-label="Blog post list">
 			<ul class="space-y-8 text-start">
 				{
-					page.data.map((p) => (
+					page.data.map((p: any) => (
 						<li class="flex flex-col flex-wrap gap-2 sm:flex-row [&_q]:basis-full">
 							<PostPreview post={p} as="h2" withDesc />
 						</li>
@@ -80,7 +80,7 @@ const paginationProps = {
 						Tags
 					</h2>
 					<ul class="text-bgColor flex flex-wrap gap-2">
-						{uniqueTags.map((tag) => (
+						{uniqueTags.map((tag: string) => (
 							<li>
 								<a
 									class="bg-accent flex items-center justify-center rounded-lg p-1"
