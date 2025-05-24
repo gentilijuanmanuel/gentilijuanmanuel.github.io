@@ -20,7 +20,7 @@ export const SOCIAL_LINKS = {
 };
 
 export const WORK_LINKS = {
-	venmo: "https://venmo.com/",
+	runna: "https://www.runna.com/",
 };
 
 export const MONETIZATION_LINKS = {
