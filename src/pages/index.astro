@@ -47,17 +47,11 @@ const allPostsByDate = sortMDByDate(englishPosts).slice(0, MAX_POSTS);
 	</section>
 	<section aria-label="Reading" class="mt-16">
 		<h2 class="title mb-4 text-xl">Reading</h2>
-		<ul class="space-y-4 sm:space-y-2">
-			<li class="flex flex-col gap-x-2 sm:flex-row">
-				<a 
-					href={READING_LINKS.readwise}
-					target="_blank"
-					class="cactus-link"
-					rel="prefetch"
-				>
-					Join to my Readwise Newsletter and get my latest highlights 📖
-				</a>
-			</li>
-		</ul>
+		<p class="mb-4">
+			All my highlights are collected on my Readwise.
+			You can join to my newsletter to get them in your inbox,
+			by clicking
+			<a class="sm:hover:underline" href={READING_LINKS.readwise} target="_blank" rel="noopener noreferrer">here</a>.
+		</p>
 	</section>
 </PageLayout>
