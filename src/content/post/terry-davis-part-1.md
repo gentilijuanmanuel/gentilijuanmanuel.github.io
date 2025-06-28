@@ -9,7 +9,7 @@ translationSlug: "terry-davis-part-1es"
 
 <img src="/terry-davis/what-is-reality.png" alt="What's reality? I don't know">
 
-# Índice completo
+# Complete index
 
 0. Rabbit Hole
 1. Attempt at biography
