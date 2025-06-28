@@ -39,7 +39,7 @@ hurgar en los videos de [_Fireship_](https://www.youtube.com/@Fireship), canal
 de un programador en el que comparte tutoriales, explica _fun facts_ de la
 industria, da su opinión sobre nuevas librerías, interpreta noticias de
 tecnología, etc. Seleccionó uno de nombre
-[***TempleOS in 100 Seconds**](https://www.youtube.com/watch?v=h7gf5M04hdg).*
+[_TempleOS in 100 Seconds_](https://www.youtube.com/watch?v=h7gf5M04hdg).
 
 Lo que siguió fue extraño: un muchacho de cara alargada, mandíbulas presentes,
 siempre con gorra, _stremeaba_ un juego que consistía en un grupo de gente en el

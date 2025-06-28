@@ -38,7 +38,7 @@ six developers are interested in. One of them started digging through the videos
 on [_Fireship_](https://www.youtube.com/@Fireship), a programmer's channel where
 he shares tutorials, explains _fun facts_ about the industry, gives his opinion
 on new libraries, interprets technology news, and so on. He selected one called
-[***TempleOS in 100 Seconds**](https://www.youtube.com/watch?v=h7gf5M04hdg).*
+[_TempleOS in 100 Seconds_](https://www.youtube.com/watch?v=h7gf5M04hdg).
 
 What followed was strange: a boy with an elongated face, jaws present, always
 wearing a cap, _was streaming_ a game consisting of a group of people in the
@@ -132,7 +132,7 @@ chronological list about his life and work:
 
 # Utilitarianism
 
-<img src="/terry-davis/temple-os.png" alt="La homepage de TempleOS">
+<img src="/terry-davis/temple-os.png" alt="TempleOS's homepage">
 
 Trying to promote the use of the first version of TempleOS (called _LoseThos_),
 Terry writes in [OSNews](https://www.osnews.com/):
