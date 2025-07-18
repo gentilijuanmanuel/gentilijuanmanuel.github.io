@@ -26,6 +26,8 @@ const socialImage = ogImage ?? `/og-image/${slug}.png`;
 const articleDate = publishDate.toISOString();
 const { headings } = await post.render();
 
+console.log(headings.length)
+
 // Get the current language from localStorage or default to post's language
 const currentLanguage = language;
 ---
@@ -98,6 +100,9 @@ const currentLanguage = language;
 							</li>
 						))}
 					</ul>
+					<div class="mt-4">
+						<MonetizationButtons />
+					</div>
 				</aside>
 			)
 		}
@@ -133,5 +138,7 @@ const currentLanguage = language;
 			<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"></path>
 		</svg>
 	</button>
-	<MonetizationButtons />
+	<div class="mt-4 lg:hidden">
+		<MonetizationButtons />
+	</div>
 </BaseLayout>
