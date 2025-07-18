@@ -26,8 +26,6 @@ const socialImage = ogImage ?? `/og-image/${slug}.png`;
 const articleDate = publishDate.toISOString();
 const { headings } = await post.render();
 
-console.log(headings.length)
-
 // Get the current language from localStorage or default to post's language
 const currentLanguage = language;
 ---
