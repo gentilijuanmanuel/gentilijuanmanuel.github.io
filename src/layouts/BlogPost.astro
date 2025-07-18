@@ -98,6 +98,9 @@ const currentLanguage = language;
 							</li>
 						))}
 					</ul>
+					<div class="mt-4">
+						<MonetizationButtons />
+					</div>
 				</aside>
 			)
 		}
@@ -133,5 +136,7 @@ const currentLanguage = language;
 			<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"></path>
 		</svg>
 	</button>
-	<MonetizationButtons />
+	<div class="mt-4 lg:hidden">
+		<MonetizationButtons />
+	</div>
 </BaseLayout>
