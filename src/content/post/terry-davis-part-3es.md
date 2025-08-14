@@ -100,9 +100,9 @@ orientadas a _pegarla_ en este nuevo medio, a aumentar las métricas.
 
 Experimentar la honestidad brutal de Terry hace extrañar un poco esos _old days_
 del internet. Un esquizofrénico con una bandera, un _leitmotiv_ inmutable,
-******diciendo lo que piensa sin tapujos, con naturalidad, transparencia, sin
-dobles sentidos o intenciones encubiertas (”_tengo un conjunto de valores pero
-si no te gustan, tengo otros”_).
+diciendo lo que piensa sin tapujos, con naturalidad, transparencia, sin dobles
+sentidos o intenciones encubiertas (”_tengo un conjunto de valores pero si no te
+gustan, tengo otros”_).
 
 Como dice un comentario en internet:
 
@@ -179,7 +179,7 @@ más llevadera una realidad atormentada.
 
 En [_Sumisión_](https://es.wikipedia.org/wiki/Sumisi%C3%B3n_(novela)), mi primer
 lectura del novelista francés
-[Michel Houllebecq](https://es.wikipedia.org/wiki/Michel_Houellebecq), se narra
+[Michel Houellebecq](https://es.wikipedia.org/wiki/Michel_Houellebecq), se narra
 un hipotético futuro en el cual el islam gana el poder político en Francia. De
 repente los judíos se vuelven a Israel, aumenta el uso de las burkas… El
 protagonista, un profesor universitario hastiado de su vida, tiene un diálogo
@@ -310,6 +310,6 @@ Leo los comentarios del video… un seguidor dice:
 - [The Internet Archive](https://archive.org/details/TerryADavis_TempleOS_Archive/fan+media/videos/TempleProgramming+(UCnrwMVe-6Q_wT1k5378oXpA)/20190725+-+Xy1aBvPJtVo+-+TempleOS+Assembly+Tutorial+-+Creating+a+Function/20190725+-+Xy1aBvPJtVo+-+TempleOS+Assembly+Tutorial+-+Creating+a+Function.f303.webm):
   una colección exhaustiva de casi todos los bits que Terry produjo en el mundo
   digital: videos de YouTube que ya no están más disponibles (por alguna razón
-  Terry borró todo **antes de morir, dejando sólo la última grabación previa a
-  su muerte), documentos con sus apariciones por los foros, reflexiones
-  escritas, tutoriales, imágenes ISO de TempleOS… Un puzzle de información.
+  Terry borró todo antes de morir, dejando sólo la última grabación previa a su
+  muerte), documentos con sus apariciones por los foros, reflexiones escritas,
+  tutoriales, imágenes ISO de TempleOS… Un puzzle de información.

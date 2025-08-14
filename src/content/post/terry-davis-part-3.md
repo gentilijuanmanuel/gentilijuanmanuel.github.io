@@ -98,8 +98,8 @@ to prioritize or viralize. It is a constant cacophony of words, videos and
 images oriented to _stick_ in this new media, to increase metrics.
 
 Experiencing Terry's brutal honesty makes us miss a bit those _old days_ of the
-internet. A schizophrenic with a flag, an immutable _leitmotiv_, ******speaking
-his mind openly, naturally, transparently, without double meanings or hidden
+internet. A schizophrenic with a flag, an immutable _leitmotiv_, speaking his
+mind openly, naturally, transparently, without double meanings or hidden
 intentions ("_I have a set of values but if you don't like them, I have
 others")_.
 
@@ -177,7 +177,7 @@ bearable.
 
 In [_Submission_](https://es.wikipedia.org/wiki/Sumisi%C3%B3n_(novela)), my
 first read by French novelist
-[Michel Houllebecq](https://es.wikipedia.org/wiki/Michel_Houellebecq), a
+[Michel Houellebecq](https://es.wikipedia.org/wiki/Michel_Houellebecq), a
 hypothetical future is narrated in which Islam gains political power in France.
 Suddenly Jews turn to Israel, the wearing of burqas increases... The
 protagonist, a university professor jaded with his life, has a dialogue with one
@@ -305,6 +305,6 @@ Aren't we all?
 - [The Internet Archive](https://archive.org/details/TerryADavis_TempleOS_Archive/fan+media/videos/TempleProgramming+(UCnrwMVe-6Q_wT1k5378oXpA)/20190725+-+Xy1aBvPJtVo+-+TempleOS+Assembly+Tutorial+-+Creating+a+Function/20190725+-+Xy1aBvPJtVo+-+TempleOS+Assembly+Tutorial+-+Creating+a+Function.f303.webm):
   an exhaustive collection of almost all the bits that Terry produced in the
   digital world: YouTube videos that are no longer available (for some reason
-  Terry deleted everything **before he died, leaving only the last recording
+  Terry deleted everything before he died, leaving only the last recording
   before his death), documents with his appearances on forums, written
   reflections, tutorials, TempleOS ISO images... A puzzle of information.
