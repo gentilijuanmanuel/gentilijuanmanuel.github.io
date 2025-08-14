@@ -58,7 +58,7 @@ In one of them, he devotes
 > can understand it. That's other, right? Journals and academic journals...
 > they... they... try to make it so complicated people think you're a genius._
 
-This is, without a doubt, what is called a _"hot take"._ Quite common in their
+This is, without a doubt, what is called a _"hot take"._ Quite common in his
 statements in front of the camera. In the same vein, there is a famous principle
 that we developers often repeat:
 
@@ -95,13 +95,12 @@ all the time someone is trying to sell you something. Likewise, it seems that
 all the time those who speak or write or post issue messages with special
 consideration to what the listener wants to hear, to what the algorithm decides
 to prioritize or viralize. It is a constant cacophony of words, videos and
-images oriented to _stick_ in this new media, to increase metrics.
+images oriented to increase metrics in this new media.
 
 Experiencing Terry's brutal honesty makes us miss a bit those _old days_ of the
-internet. A schizophrenic with a flag, an immutable _leitmotiv_, speaking his
-mind openly, naturally, transparently, without double meanings or hidden
-intentions ("_I have a set of values but if you don't like them, I have
-others")_.
+internet. A schizophrenic with an immutable _leitmotiv_, speaking his mind
+openly, naturally, transparently, without double meanings or hidden intentions
+("_I have a set of values but if you don't like them, I have others")_.
 
 As a comment on the internet says:
 
@@ -262,8 +261,8 @@ mysterious reality in which we are immersed, but everything seems to indicate
 that certainty will not be given to us. At least not in life.
 
 Terry deleted all his videos from his official YouTube channel. In 2018, in
-Dallas, Oregon, he stopped at a
-library[(The Dalles Wasco Country Library](https://www.google.com/maps/place/The+Dalles+Wasco+County+Library/@45.5988675,-121.1854205,374m/data=!3m2!1e3!4b1!4m6!3m5!1s0x54961e75d8d45daf:0x53839b22aa21cc07!8m2!3d45.5988675!4d-121.1854205!16s%2Fm%2F0j9s3ln?entry=ttu&g_ep=EgoyMDI1MDYxNy4wIKXMDSoASAFQAw%3D%3D)),
+Dallas, Oregon, he stopped at a library
+[(The Dalles Wasco Country Library](https://www.google.com/maps/place/The+Dalles+Wasco+County+Library/@45.5988675,-121.1854205,374m/data=!3m2!1e3!4b1!4m6!3m5!1s0x54961e75d8d45daf:0x53839b22aa21cc07!8m2!3d45.5988675!4d-121.1854205!16s%2Fm%2F0j9s3ln?entry=ttu&g_ep=EgoyMDI1MDYxNy4wIKXMDSoASAFQAw%3D%3D)),
 where he used a computer for who knows what. He felt watched, typical weirdo. He
 got out, sat on a bench at the entrance, pulled out his cell phone and filmed
 the last and only video present on his channel. He praised the library. He
@@ -298,13 +297,12 @@ Aren't we all?
 - [The Digital Human - Devotion](https://podcasts.apple.com/ar/podcast/the-digital-human/id524041020?i=1000522495173):
   BBC podcast. It takes as a starting point the tragic death of Terry in The
   Dalles, Oregon. From the repercussion of the report of his death (at the
-  beginning, a _homeless_ NN that after the infinite calls of his fans became a
+  beginning, a _homeless_ that after the infinite calls of his fans became a
   human with name, surname and a strange and beautiful story behind), attempts
   to analyze both the creator and the created from several prisms begin:
   technical, artistic, religious, psychological.
 - [The Internet Archive](https://archive.org/details/TerryADavis_TempleOS_Archive/fan+media/videos/TempleProgramming+(UCnrwMVe-6Q_wT1k5378oXpA)/20190725+-+Xy1aBvPJtVo+-+TempleOS+Assembly+Tutorial+-+Creating+a+Function/20190725+-+Xy1aBvPJtVo+-+TempleOS+Assembly+Tutorial+-+Creating+a+Function.f303.webm):
   an exhaustive collection of almost all the bits that Terry produced in the
-  digital world: YouTube videos that are no longer available (for some reason
-  Terry deleted everything before he died, leaving only the last recording
-  before his death), documents with his appearances on forums, written
-  reflections, tutorials, TempleOS ISO images... A puzzle of information.
+  digital world: YouTube videos that are no longer available, documents with his
+  appearances on forums, written reflections, tutorials, TempleOS ISO images...
+  A puzzle of information.
