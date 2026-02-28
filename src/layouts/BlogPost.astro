@@ -28,6 +28,7 @@ const { headings } = await post.render();
 
 // Get the current language from localStorage or default to post's language
 const currentLanguage = language;
+const hasAnalytics = Boolean(import.meta.env.PUBLIC_GA_MEASUREMENT_ID);
 ---
 
 <script define:vars={{ currentLanguage, slug, translatedPost, language }}>
@@ -77,6 +78,95 @@ const currentLanguage = language;
 			observer.observe(targetHeader);
 		}
 	});
+</script>
+
+<script is:inline define:vars={{ slug, title, language, hasAnalytics }}>
+	if (!hasAnalytics) {
+		// Analytics not configured.
+	} else {
+		const VIEW_SECONDS = 5;
+		const READ_SECONDS = 30;
+		const READ_SCROLL_RATIO = 0.25;
+		const IDLE_THRESHOLD_MS = 15000;
+		const TICK_MS = 1000;
+
+		let engagedMs = 0;
+		let firedView = false;
+		let firedRead = false;
+		let maxScrollRatio = 0;
+		let lastTick = performance.now();
+		let lastInteraction = performance.now();
+		let isVisible = !document.hidden;
+		const trackingEnv =
+			window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+				? "local"
+				: "prod";
+
+		function sendEvent(name) {
+			if (typeof window.gtag !== "function") return;
+			window.gtag("event", name, {
+				post_slug: slug,
+				post_title: title,
+				post_language: language,
+				tracking_env: trackingEnv,
+			});
+		}
+
+		function recordInteraction() {
+			lastInteraction = performance.now();
+		}
+
+		function updateScrollRatio() {
+			const doc = document.scrollingElement || document.documentElement || document.body;
+			if (!doc) return;
+			const scrollTop = doc.scrollTop || 0;
+			const scrollHeight = doc.scrollHeight || 0;
+			const clientHeight = doc.clientHeight || window.innerHeight || 0;
+			const maxScrollable = Math.max(scrollHeight - clientHeight, 1);
+			const ratio = scrollTop / maxScrollable;
+			if (ratio > maxScrollRatio) maxScrollRatio = ratio;
+		}
+
+		window.addEventListener("scroll", () => {
+			recordInteraction();
+			updateScrollRatio();
+		}, { passive: true });
+
+		["mousemove", "keydown", "touchstart", "touchmove"].forEach((eventName) => {
+			window.addEventListener(eventName, recordInteraction, { passive: true });
+		});
+
+		document.addEventListener("visibilitychange", () => {
+			isVisible = !document.hidden;
+			if (isVisible) {
+				lastInteraction = performance.now();
+				updateScrollRatio();
+			}
+		});
+
+		updateScrollRatio();
+
+		setInterval(() => {
+			const now = performance.now();
+			const elapsed = now - lastTick;
+			lastTick = now;
+
+			if (!isVisible) return;
+			if (now - lastInteraction > IDLE_THRESHOLD_MS) return;
+
+			engagedMs += elapsed;
+
+			if (!firedView && engagedMs >= VIEW_SECONDS * 1000) {
+				firedView = true;
+				sendEvent("post_view");
+			}
+
+			if (!firedRead && engagedMs >= READ_SECONDS * 1000 && maxScrollRatio >= READ_SCROLL_RATIO) {
+				firedRead = true;
+				sendEvent("post_read");
+			}
+		}, TICK_MS);
+	}
 </script>
 
 <BaseLayout meta={{ title, description, articleDate, ogImage: socialImage }}>
