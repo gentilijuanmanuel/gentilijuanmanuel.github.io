@@ -103,7 +103,10 @@ function toHighlight(book: ReadwiseBook, highlight: ReadwiseHighlight): Highligh
 	const text = normalizeText(highlight.text ?? "");
 	if (text.length < MIN_TEXT_LENGTH || text.length > MAX_TEXT_LENGTH) return null;
 
-	const title = (book.readable_title || book.title || "").trim();
+	// `readable_title` is not the display name its name suggests: for books
+	// imported as a file, Readwise fills it with the uploaded file name, such as
+	// "Slow-Productivity_cal-Newport". The clean name lives in `title`.
+	const title = (book.title || book.readable_title || "").trim();
 	if (!title) return null;
 
 	const author = book.author?.trim() || null;
