@@ -24,6 +24,7 @@ jobs:
         uses: withastro/action@v3
         env:
           PUBLIC_GA_MEASUREMENT_ID: ${{ secrets.PUBLIC_GA_MEASUREMENT_ID }}
+          READWISE_ACCESS_TOKEN: ${{ secrets.READWISE_ACCESS_TOKEN }}
         with:
           package-manager: npm
           # path: . # The root location of your Astro project inside the repository. (optional)

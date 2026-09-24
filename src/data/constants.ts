@@ -26,6 +26,7 @@ export const READING_LINKS = {
 
 export const WORK_LINKS = {
 	runna: "https://www.runna.com/",
+	strava: "https://www.strava.com/",
 };
 
 export const MONETIZATION_LINKS = {

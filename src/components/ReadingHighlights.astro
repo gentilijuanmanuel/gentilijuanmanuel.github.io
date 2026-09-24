@@ -1,0 +1,115 @@
+---
+import { getHighlightPool, pickFromDistinctBooks } from "@/utils/readwise";
+
+const VISIBLE_COUNT = 3;
+
+// The pool is fetched while the site is built. The highlights rendered below
+// are a server-side pick, so the section is never empty before scripts run; the
+// inline script swaps them for a fresh pick on every page load.
+const pool = await getHighlightPool();
+const highlights = pickFromDistinctBooks(pool, VISIBLE_COUNT);
+
+// Nothing to show (no token, or the API was unreachable): render nothing and
+// leave the rest of the Reading section untouched.
+if (highlights.length === 0) return;
+
+const sourceLabel = (title: string, author: string | null) =>
+	author ? `${title}, ${author}` : title;
+
+// `set:html` does not escape, and a highlight could legitimately contain the
+// closing sequence of the surrounding tag.
+const serializedPool = JSON.stringify(pool).replace(/</g, "\\u003c");
+---
+
+<div class="mt-6">
+	<ul id="readwise-highlights" class="space-y-6">
+		{
+			highlights.map((highlight) => (
+				<li data-highlight class="border-l-2 border-accent pl-4">
+					<blockquote>
+						<p data-highlight-text>{highlight.text}</p>
+						<footer class="mt-2 text-xs">
+							<a
+								data-highlight-link
+								class="cactus-link"
+								href={highlight.url}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<cite data-highlight-source class="not-italic">
+									{sourceLabel(highlight.title, highlight.author)}
+								</cite>
+							</a>
+						</footer>
+					</blockquote>
+				</li>
+			))
+		}
+	</ul>
+
+	<script id="readwise-highlights-data" type="application/json" is:inline set:html={serializedPool}
+	></script>
+
+	<script is:inline>
+		// Runs while the document is parsed, right after the list, so the swap
+		// happens before the first paint instead of flashing the build-time pick.
+		(function () {
+			var list = document.getElementById("readwise-highlights");
+			var data = document.getElementById("readwise-highlights-data");
+			if (!list || !data) return;
+
+			var pool;
+			try {
+				pool = JSON.parse(data.textContent || "[]");
+			} catch (error) {
+				return;
+			}
+			if (!Array.isArray(pool) || pool.length === 0) return;
+
+			var order = pool.map(function (_, index) {
+				return index;
+			});
+			for (var i = order.length - 1; i > 0; i--) {
+				var j = Math.floor(Math.random() * (i + 1));
+				var swap = order[i];
+				order[i] = order[j];
+				order[j] = swap;
+			}
+
+			var items = list.querySelectorAll("[data-highlight]");
+
+			// Prefer a different book per slot, then top up if the pool holds
+			// fewer distinct books than there are slots.
+			var picked = [];
+			var seen = Object.create(null);
+			for (var pass = 0; pass < 2 && picked.length < items.length; pass++) {
+				for (var index = 0; index < order.length && picked.length < items.length; index++) {
+					var candidate = pool[order[index]];
+					if (!candidate) continue;
+					if (pass === 0 && seen[candidate.title]) continue;
+					if (pass === 1 && picked.indexOf(candidate) !== -1) continue;
+					seen[candidate.title] = true;
+					picked.push(candidate);
+				}
+			}
+
+			for (var position = 0; position < items.length; position++) {
+				var highlight = picked[position];
+				if (!highlight) continue;
+
+				var item = items[position];
+				var text = item.querySelector("[data-highlight-text]");
+				var source = item.querySelector("[data-highlight-source]");
+				var link = item.querySelector("[data-highlight-link]");
+
+				if (text) text.textContent = highlight.text;
+				if (source) {
+					source.textContent = highlight.author
+						? highlight.title + ", " + highlight.author
+						: highlight.title;
+				}
+				if (link) link.href = highlight.url;
+			}
+		})();
+	</script>
+</div>
