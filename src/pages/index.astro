@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base";
 import PostPreview from "@/components/blog/PostPreview";
 import SocialList from "@/components/SocialList";
+import ReadingHighlights from "@/components/ReadingHighlights";
 import { sortMDByDate } from "@/utils";
 import { READING_LINKS, WORK_LINKS } from "@/data/constants";
 
@@ -48,10 +49,11 @@ const allPostsByDate = sortMDByDate(englishPosts).slice(0, MAX_POSTS);
 	<section aria-label="Reading" class="mt-16">
 		<h2 class="title mb-4 text-xl">Reading</h2>
 		<p class="mb-4">
-			All my highlights are collected on my Readwise.
+			All my highlights are collected on my Readwise account.
 			You can join to my newsletter to get them in your inbox,
 			by clicking
 			<a class="sm:hover:underline" href={READING_LINKS.readwise} target="_blank" rel="noopener noreferrer">here</a>.
 		</p>
+		<ReadingHighlights />
 	</section>
 </PageLayout>
