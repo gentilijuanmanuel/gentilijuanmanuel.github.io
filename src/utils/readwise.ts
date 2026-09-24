@@ -16,10 +16,13 @@ const EXPORT_ENDPOINT = "https://readwise.io/api/v2/export/";
 /**
  * Where a highlight's source line points. Readwise's own highlight and book
  * urls require an account, so a reader clicking one lands on a login page.
- * Goodreads search works for every book: only a handful carry an ISBN or ASIN,
+ * A search link works for every book: only a handful carry an ISBN or ASIN,
  * so a direct book page is not an option for most of the library.
+ *
+ * `i=stripbooks` scopes the search to the Books department, which keeps noisy
+ * titles from matching unrelated products.
  */
-const GOODREADS_SEARCH_ENDPOINT = "https://www.goodreads.com/search";
+const AMAZON_SEARCH_ENDPOINT = "https://www.amazon.com/s";
 
 /** Abort a single request that takes too long, so a slow API can't hang CI. */
 const REQUEST_TIMEOUT_MS = 20_000;
@@ -104,9 +107,10 @@ function normalizeText(text: string): string {
 		.trim();
 }
 
-function goodreadsSearchUrl(title: string, author: string | null): string {
-	const url = new URL(GOODREADS_SEARCH_ENDPOINT);
-	url.searchParams.set("q", [title, author].filter(Boolean).join(" "));
+function bookSearchUrl(title: string, author: string | null): string {
+	const url = new URL(AMAZON_SEARCH_ENDPOINT);
+	url.searchParams.set("k", [title, author].filter(Boolean).join(" "));
+	url.searchParams.set("i", "stripbooks");
 	return url.toString();
 }
 
@@ -124,7 +128,7 @@ function toHighlight(book: ReadwiseBook, highlight: ReadwiseHighlight): Highligh
 
 	const author = book.author?.trim() || null;
 
-	return { id: highlight.id, text, title, author, url: goodreadsSearchUrl(title, author) };
+	return { id: highlight.id, text, title, author, url: bookSearchUrl(title, author) };
 }
 
 async function fetchExportPage(
