@@ -20,9 +20,11 @@ const year = new Date().getFullYear();
 			MENU_LINKS.map((link) => (
 				<a
 					href={link.path}
-					class="sm:hover:text-textColor px-4 py-2 sm:px-2 sm:py-0 sm:hover:underline"
+					class="sm:hover:text-textColor px-4 py-2 sm:px-2 sm:py-0"
 				>
-					{link.title}
+					{/* The underline sits on the label so it hugs the text instead of
+					    dropping to the bottom of the link's tap target. */}
+					<span class="cactus-link">{link.title}</span>
 				</a>
 			))
 		}
