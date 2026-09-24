@@ -13,6 +13,14 @@
 
 const EXPORT_ENDPOINT = "https://readwise.io/api/v2/export/";
 
+/**
+ * Where a highlight's source line points. Readwise's own highlight and book
+ * urls require an account, so a reader clicking one lands on a login page.
+ * Goodreads search works for every book: only a handful carry an ISBN or ASIN,
+ * so a direct book page is not an option for most of the library.
+ */
+const GOODREADS_SEARCH_ENDPOINT = "https://www.goodreads.com/search";
+
 /** Abort a single request that takes too long, so a slow API can't hang CI. */
 const REQUEST_TIMEOUT_MS = 20_000;
 
@@ -47,6 +55,7 @@ export interface Highlight {
 	text: string;
 	title: string;
 	author: string | null;
+	/** A public link for the book, so readers without a Readwise account can follow it. */
 	url: string;
 }
 
@@ -55,7 +64,6 @@ interface ReadwiseHighlight {
 	text: string;
 	is_deleted?: boolean;
 	is_discard?: boolean;
-	readwise_url?: string | null;
 }
 
 interface ReadwiseBook {
@@ -64,7 +72,6 @@ interface ReadwiseBook {
 	readable_title?: string | null;
 	author?: string | null;
 	category?: string | null;
-	readwise_url?: string | null;
 	is_deleted?: boolean;
 	highlights?: ReadwiseHighlight[];
 }
@@ -97,6 +104,12 @@ function normalizeText(text: string): string {
 		.trim();
 }
 
+function goodreadsSearchUrl(title: string, author: string | null): string {
+	const url = new URL(GOODREADS_SEARCH_ENDPOINT);
+	url.searchParams.set("q", [title, author].filter(Boolean).join(" "));
+	return url.toString();
+}
+
 function toHighlight(book: ReadwiseBook, highlight: ReadwiseHighlight): Highlight | null {
 	if (highlight.is_deleted || highlight.is_discard) return null;
 
@@ -110,10 +123,8 @@ function toHighlight(book: ReadwiseBook, highlight: ReadwiseHighlight): Highligh
 	if (!title) return null;
 
 	const author = book.author?.trim() || null;
-	const url = highlight.readwise_url || book.readwise_url;
-	if (!url) return null;
 
-	return { id: highlight.id, text, title, author, url };
+	return { id: highlight.id, text, title, author, url: goodreadsSearchUrl(title, author) };
 }
 
 async function fetchExportPage(
