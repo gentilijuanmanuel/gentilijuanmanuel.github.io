@@ -6,6 +6,7 @@ import SocialList from "@/components/SocialList";
 import ReadingHighlights from "@/components/ReadingHighlights";
 import { sortMDByDate } from "@/utils";
 import { READING_LINKS, WORK_LINKS } from "@/data/constants";
+import { siteConfig } from "@/site-config";
 
 const MAX_POSTS = 100;
 const allPosts = await getCollection("post");
@@ -16,13 +17,19 @@ const allPostsByDate = sortMDByDate(englishPosts).slice(0, MAX_POSTS);
 
 <PageLayout meta={{ title: "Home" }}>
 	<section>
-		<h1 class="title mb-6">
-			Life isn't about finding yourself, or finding anything.
-			<br />
-			Life is about creating yourself.
-			<br />
-			And creating things. (Bob Dylan)
-		</h1>
+		<h1 class="sr-only">{siteConfig.title}</h1>
+		<blockquote class="mb-8 border-l-2 border-accent pl-4 sm:pl-6">
+			<p class="text-lg leading-snug sm:text-xl">
+				Life isn't about finding yourself, or finding anything.
+				<br />
+				Life is about creating yourself.
+				<br />
+				And creating things.
+			</p>
+			<footer class="mt-3 text-sm">
+				<cite class="not-italic">Bob Dylan</cite>
+			</footer>
+		</blockquote>
 		<p class="mb-4">
 			A random guy who writes, both in natural and programming languages.
 		</p>
