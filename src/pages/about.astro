@@ -1,7 +1,7 @@
 ---
 import PageLayout from "@/layouts/Base";
 import { Image } from "@astrojs/image/components";
-import profileImg from "../assets/profile-picture.png";
+import profileImg from "../assets/profile-picture.jpg";
 import LanguageSelector from "@/components/LanguageSelector";
 
 const meta = {
@@ -15,8 +15,8 @@ const meta = {
 		<div class="flex justify-center mb-8">
 			<Image
 				src={profileImg}
-				class="h-32 w-32 rounded-full object-cover"
-				alt="A picture of me in Grindelwald, Switzerland"
+				class="h-32 w-32 rounded-full border-2 border-textColor object-cover"
+				alt="A picture of me with my dog"
 				loading="eager"
 			/>
 		</div>
