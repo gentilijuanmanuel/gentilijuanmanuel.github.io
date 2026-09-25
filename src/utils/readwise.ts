@@ -30,8 +30,13 @@ const REQUEST_TIMEOUT_MS = 20_000;
 /** Safety net for the pagination loop. */
 const MAX_PAGES = 25;
 
-/** Highlights longer than this are dropped: they read poorly in a small widget. */
-const MAX_TEXT_LENGTH = 500;
+/**
+ * Highlights longer than this are dropped. The limit exists only to keep a
+ * single quote from swallowing the section: the longest in the library runs to
+ * 7,500 characters. It is set well above the typical highlight, whose median
+ * length is around 430 characters, so it trims the tail rather than the body.
+ */
+const MAX_TEXT_LENGTH = 1500;
 
 /** Very short highlights are usually fragments without context. */
 const MIN_TEXT_LENGTH = 40;
@@ -39,7 +44,9 @@ const MIN_TEXT_LENGTH = 40;
 /**
  * How many highlights get embedded in the page for the client to choose from.
  * Kept small because the pool ships inside the HTML; the pool itself is
- * re-drawn from the whole library on every build.
+ * re-drawn from the whole library on every build. Anything above the number of
+ * books in the library only adds second and third quotes for some of them, so
+ * there is little point pushing it far beyond that.
  */
 const POOL_SIZE = 60;
 
@@ -160,13 +167,52 @@ function shuffle<T>(items: readonly T[]): T[] {
 	return result;
 }
 
-export function pickRandom<T>(items: readonly T[], count: number): T[] {
-	return shuffle(items).slice(0, count);
+/**
+ * Builds the pool one book at a time rather than sampling highlights directly.
+ *
+ * Sampling highlights would track how much each book was highlighted, not how
+ * many books there are: the heaviest book in the library has 140 eligible
+ * highlights and the lightest has 1, so the heavy ones would crowd out the rest.
+ * Taking a round of one highlight per book, then a second round, and so on,
+ * gives every book a slot before any book gets a second one.
+ */
+function poolByBook(candidates: readonly Highlight[], size: number): Highlight[] {
+	const byBook = new Map<string, Highlight[]>();
+	for (const highlight of candidates) {
+		const bucket = byBook.get(highlight.title);
+		if (bucket) bucket.push(highlight);
+		else byBook.set(highlight.title, [highlight]);
+	}
+
+	// Book order decides who gets the leftover slots, and highlight order decides
+	// which quote represents each book, so both are shuffled per build.
+	const queues = shuffle([...byBook.values()]).map((highlights) => shuffle(highlights));
+	const pool: Highlight[] = [];
+
+	for (let round = 0; pool.length < size; round++) {
+		let added = false;
+
+		for (const queue of queues) {
+			if (pool.length === size) break;
+
+			const highlight = queue[round];
+			if (!highlight) continue;
+
+			pool.push(highlight);
+			added = true;
+		}
+
+		// Every book is exhausted: the library has fewer highlights than `size`.
+		if (!added) break;
+	}
+
+	return pool;
 }
 
 /**
- * Like `pickRandom`, but avoids showing the same book twice. Falls back to
- * repeating books only when the pool holds fewer distinct ones than requested.
+ * Picks `count` highlights at random, avoiding showing the same book twice.
+ * Falls back to repeating books only when the pool holds fewer distinct ones
+ * than requested.
  */
 export function pickFromDistinctBooks(items: readonly Highlight[], count: number): Highlight[] {
 	const shuffled = shuffle(items);
@@ -236,12 +282,13 @@ export async function getHighlightPool(): Promise<Highlight[]> {
 		return [];
 	}
 
-	// Shuffling before slicing keeps the pool representative of the whole
-	// library instead of favouring whatever the API returns first.
-	const pool = pickRandom(candidates, POOL_SIZE);
+	const pool = poolByBook(candidates, POOL_SIZE);
 	cache = { pool, expiresAt: Date.now() + CACHE_TTL_MS };
 
-	console.info(`[readwise] embedded ${pool.length} of ${candidates.length} eligible highlights`);
+	const booksInPool = new Set(pool.map((highlight) => highlight.title)).size;
+	console.info(
+		`[readwise] embedded ${pool.length} of ${candidates.length} eligible highlights, covering ${booksInPool} books`
+	);
 
 	return pool;
 }
