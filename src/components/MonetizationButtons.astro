@@ -1,26 +1,43 @@
 ---
 import { MONETIZATION_LINKS } from "@/data/constants";
+
+const links = [
+	{ href: MONETIZATION_LINKS.buyMeACoffee, label: "Buy me a coffee", hint: "USD" },
+	{ href: MONETIZATION_LINKS.cafecito, label: "Cafecito", hint: "ARS" },
+];
 ---
 
-<div class="flex flex-col items-center space-y-6">
-	<script
-		type="text/javascript"
-		src={MONETIZATION_LINKS.buyMeACoffee.scriptSource}
-		data-name={MONETIZATION_LINKS.buyMeACoffee.name}
-		data-slug={MONETIZATION_LINKS.buyMeACoffee.slug}
-		data-color={MONETIZATION_LINKS.buyMeACoffee.color}
-		data-emoji={MONETIZATION_LINKS.buyMeACoffee.emoji}
-		data-font={MONETIZATION_LINKS.buyMeACoffee.font}
-		data-text={MONETIZATION_LINKS.buyMeACoffee.text}
-		data-outline-color={MONETIZATION_LINKS.buyMeACoffee.outlineColor}
-		data-font-color={MONETIZATION_LINKS.buyMeACoffee.fontColor}
-		data-coffee-color={MONETIZATION_LINKS.buyMeACoffee.coffeeColor}
-	></script>
-	<a href={MONETIZATION_LINKS.cafecito.url} rel="noopener" target="_blank">
-		<img
-			srcset=`${MONETIZATION_LINKS.cafecito.images.small} 1x, ${MONETIZATION_LINKS.cafecito.images.medium} 2x, ${MONETIZATION_LINKS.cafecito.images.big} 3.75x`
-			src={MONETIZATION_LINKS.cafecito.images.xBig}
-			alt={MONETIZATION_LINKS.cafecito.alternativeText}
-		/>
-	</a>
+<div class="rounded-lg border border-line bg-elev p-3">
+	<p class="eyebrow">Support</p>
+	<ul class="mt-3 space-y-2 font-mono text-[0.75rem]">
+		{
+			links.map((link) => (
+				<li>
+					<a
+						href={link.href}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="group flex items-center gap-2 rounded-md border border-line bg-bg px-3 py-2 text-ink transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:text-accent"
+					>
+						<svg
+							class="h-4 w-4 shrink-0 text-accent"
+							aria-hidden="true"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9Z" />
+							<path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16" />
+							<path d="M8 3.5c0 1 1 1 1 2s-1 1-1 2M12 3.5c0 1 1 1 1 2s-1 1-1 2" class="origin-bottom transition-opacity duration-300 group-hover:opacity-100 opacity-50" />
+						</svg>
+						<span class="flex-1 whitespace-nowrap">{link.label}</span>
+						<span class="text-[0.625rem] text-muted">{link.hint}</span>
+					</a>
+				</li>
+			))
+		}
+	</ul>
 </div>

@@ -1,32 +1,45 @@
 ---
 import { MENU_LINKS } from "@/data/constants";
+import SocialList from "@/components/SocialList";
 
 const year = new Date().getFullYear();
+// The homepage hero already lists the social links.
+const showSocial = new URL(Astro.request.url).pathname !== "/";
 ---
 
-<footer
-	class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pb-4 pt-20 text-center align-top text-gray-500 sm:flex-row sm:justify-between sm:text-xs"
->
-	<div class="me-0 sm:me-4">
-		Copyright &copy; {year}
-		<span aria-label="rocket emoji">🚀</span>
-		Astro Cactus
-	</div>
-	<nav
-		aria-label="More on this site"
-		class="flex gap-x-2 sm:gap-x-0 sm:divide-x sm:divide-gray-500"
-	>
+<footer class="mt-auto border-t border-line">
+	<div class="mx-auto flex max-w-5xl flex-col px-5 sm:px-8">
 		{
-			MENU_LINKS.map((link) => (
-				<a
-					href={link.path}
-					class="sm:hover:text-textColor px-4 py-2 sm:px-2 sm:py-0"
-				>
-					{/* The underline sits on the label so it hugs the text instead of
-					    dropping to the bottom of the link's tap target. */}
-					<span class="cactus-link">{link.title}</span>
-				</a>
-			))
+			showSocial && (
+				<div class="-ms-2.5 border-b border-dashed border-line py-4">
+					<SocialList />
+				</div>
+			)
 		}
-	</nav>
+		<!-- A status bar, like the bottom of an editor window. -->
+		<div
+			class="flex flex-col gap-3 py-5 font-mono text-[0.6875rem] text-muted sm:flex-row sm:items-center sm:justify-between"
+		>
+			<div class="flex items-center gap-2">
+				<span class="relative flex h-2 w-2">
+					<span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60"></span>
+					<span class="relative inline-flex h-2 w-2 rounded-full bg-signal"></span>
+				</span>
+				<span>© {year} Juan Manuel Gentili</span>
+				<span aria-hidden="true">·</span>
+				<span>Argentina</span>
+			</div>
+			<nav aria-label="More on this site" class="flex flex-wrap items-center gap-x-4 gap-y-2">
+				{
+					MENU_LINKS.map((link) => (
+						<a href={link.path} class="transition-colors hover:text-accent">
+							{link.title.toLowerCase()}
+						</a>
+					))
+				}
+				<a href="/tags" class="transition-colors hover:text-accent">tags</a>
+				<a href="/rss.xml" class="transition-colors hover:text-accent">rss</a>
+			</nav>
+		</div>
+	</div>
 </footer>

@@ -4,14 +4,18 @@ import BaseHead from "@/components/BaseHead";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SkipLink from "@/components/SkipLink";
+import CommandPalette from "@/components/CommandPalette";
 import { siteConfig } from "@/site-config";
 
 interface Props {
 	meta: SiteMeta;
+	/** Wider container for pages with a side column, such as posts with an outline. */
+	wide?: boolean;
 }
 
 const {
 	meta: { title, description = siteConfig.description, ogImage, articleDate },
+	wide = false,
 } = Astro.props;
 ---
 
@@ -54,9 +58,10 @@ const {
 	<body>
 		<SkipLink />
 		<Header />
-		<main id="main" class="flex-1">
+		<main id="main" class={`mx-auto w-full flex-1 px-5 pb-24 pt-14 sm:px-8 sm:pt-20 ${wide ? "max-w-5xl" : "max-w-3xl"}`}>
 			<slot />
 		</main>
 		<Footer />
+		<CommandPalette />
 	</body>
 </html>
