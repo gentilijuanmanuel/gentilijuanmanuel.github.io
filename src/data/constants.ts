@@ -18,6 +18,7 @@ export const SOCIAL_LINKS = {
 	twitter: "https://twitter.com/jgentilicio",
 	email: "gentilijuanmanuel@gmail.com",
 	medium: "https://medium.com/@jmgentili",
+	substack: "https://substack.com/@jmgentili",
 	linkedin: "https://www.linkedin.com/in/juan-manuel-gentili",
 };
 
