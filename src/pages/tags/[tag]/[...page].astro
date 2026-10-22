@@ -50,16 +50,18 @@ const paginationProps = {
 ---
 
 <PageLayout meta={meta}>
-	<h1 class="title mb-6 flex items-center">
-		<a href="/tags/" class="cactus-link text-accent">Tags</a>
-		<span class="me-3 ms-2">→</span>
-		<span class="text-xl">#{tag}</span>
-	</h1>
+	<header class="mb-12">
+		<p class="eyebrow reveal" style="--i:0">
+			<a href="/tags/" class="transition-colors hover:text-accent">tags</a>
+			<span class="text-accent">/</span>
+		</p>
+		<h1 class="title reveal mt-3" style="--i:1"><span class="font-mono text-[0.8em] text-accent">#</span>{tag}</h1>
+	</header>
 	<section aria-label="Blog post list">
-		<ul class="space-y-8">
+		<ul>
 			{
-				page.data.map((p: any) => (
-					<li class="flex flex-col flex-wrap gap-2 sm:flex-row [&_q]:basis-full">
+				page.data.map((p: any, index: number) => (
+					<li class="reveal border-b border-dashed border-line last:border-b-0" style={`--i:${Math.min(index, 10) + 2}`}>
 						<PostPreview post={p} as="h2" withDesc />
 					</li>
 				))

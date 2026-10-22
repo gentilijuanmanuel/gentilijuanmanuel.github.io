@@ -13,24 +13,31 @@ const meta = {
 ---
 
 <PageLayout meta={meta}>
-	<h1 class="title mb-6">Tags</h1>
-	<ul class="space-y-4">
+	<header class="mb-12">
+		<p class="eyebrow reveal" style="--i:0"><span class="text-accent">//</span> index of subjects</p>
+		<h1 class="title reveal mt-3" style="--i:1">Tags</h1>
+	</header>
+	<ul class="reveal font-mono text-sm" style="--i:2">
 		{
-			Object.entries(allTags).map(([tag, val]) => (
-				<li class="flex items-center gap-x-2">
-					<a
-						class="cactus-link inline-block"
-						href={`/tags/${tag}`}
-						title={`View posts with the tag: ${tag}`}
-						rel="prefetch"
-					>
-						&#35;{tag}
-					</a>
-					<span class="inline-block">
-						- {val} Post{val > 1 && "s"}
-					</span>
-				</li>
-			))
+			Object.entries(allTags)
+				.sort(([a], [b]) => a.localeCompare(b))
+				.map(([tag, val]) => (
+					<li>
+						<a
+							class="group flex items-baseline gap-3 border-b border-dashed border-line py-3 transition-colors hover:text-accent"
+							href={`/tags/${tag}`}
+							title={`View posts with the tag: ${tag}`}
+							rel="prefetch"
+						>
+							<span class="text-accent">#</span>
+							<span>{tag}</span>
+							<span class="h-px flex-1 border-b border-dotted opacity-40" style="border-color: var(--theme-muted)" aria-hidden="true"></span>
+							<span class="text-xs text-muted">
+								{val} post{val > 1 && "s"}
+							</span>
+						</a>
+					</li>
+				))
 		}
 	</ul>
 </PageLayout>

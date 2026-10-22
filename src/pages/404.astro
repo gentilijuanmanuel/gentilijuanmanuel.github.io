@@ -1,7 +1,5 @@
 ---
 import PageLayout from "@/layouts/Base";
-import { Image } from "@astrojs/image/components";
-import aboutImg from "../assets/about-astro.png";
 
 const meta = {
 	title: "Oops! You found a missing page!",
@@ -10,14 +8,32 @@ const meta = {
 ---
 
 <PageLayout meta={meta}>
-	<h1 class="title mb-6">404 | Oops something went wrong</h1>
-	<p class="mb-8">Please use the navigation to find your way back</p>
-	<div class="my-4 grid justify-center">
-		<Image
-			class="rotate-180"
-			src={aboutImg}
-			alt="A cartoon cactus looking at the 'Astro.build' logo"
-			loading="eager"
-		/>
+	<div class="py-6 sm:py-12">
+		<div class="reveal overflow-hidden rounded-xl border border-line bg-elev font-mono text-[0.8125rem]" style="--i:0">
+			<div class="flex items-center gap-2 border-b border-line px-4 py-3">
+				<span class="h-2.5 w-2.5 rounded-full bg-line"></span>
+				<span class="h-2.5 w-2.5 rounded-full bg-line"></span>
+				<span class="h-2.5 w-2.5 rounded-full bg-line"></span>
+				<span class="ms-3 text-[0.6875rem] text-muted">~/library</span>
+			</div>
+			<div class="space-y-1.5 p-5 leading-relaxed text-ink-soft sm:p-7">
+				<p><span class="text-accent">❯</span> <span class="text-ink">find</span> . -name "<span id="missing-path">this-page</span>"</p>
+				<p class="text-muted">find: no such page on any shelf</p>
+				<p><span class="text-accent">❯</span> <span class="text-ink">echo</span> $?</p>
+				<p class="text-muted">404</p>
+				<p><span class="text-accent">❯</span> <span class="caret" aria-hidden="true"></span></p>
+			</div>
+		</div>
+		<h1 class="title reveal mt-14" style="--i:1">This page was never written.</h1>
+		<p class="reveal mt-4 max-w-lg text-lg text-ink-soft" style="--i:2">
+			Or it was, and then it was torn out. Either way, there is nothing here. Try going
+			<a href="/" class="ink-link text-ink">home</a>, browsing <a href="/posts" class="ink-link text-ink">the archive</a>, or
+			press <span class="kbd">/</span> to search.
+		</p>
 	</div>
 </PageLayout>
+
+<script>
+	const path = document.getElementById("missing-path");
+	if (path) path.textContent = window.location.pathname.replace(/\/$/, "").split("/").pop() || "this-page";
+</script>

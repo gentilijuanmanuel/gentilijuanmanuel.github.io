@@ -10,7 +10,7 @@ export default defineConfig({
 	site: "https://gentilijuanmanuel.github.io",
 	markdown: {
 		shikiConfig: {
-			theme: "dracula",
+			theme: "css-variables",
 			wrap: true,
 		},
 	},

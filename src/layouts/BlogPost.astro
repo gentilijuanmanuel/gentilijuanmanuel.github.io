@@ -25,6 +25,11 @@ const {
 const socialImage = ogImage ?? `/og-image/${slug}.png`;
 const articleDate = publishDate.toISOString();
 const { headings } = await post.render();
+const outline = headings.filter(({ depth }) => depth <= 3);
+
+const WORDS_PER_MINUTE = 220;
+const wordCount = post.body.split(/\s+/).filter(Boolean).length;
+const readingMinutes = Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
 
 // Get the current language from localStorage or default to post's language
 const currentLanguage = language;
@@ -57,8 +62,47 @@ const hasAnalytics = Boolean(import.meta.env.PUBLIC_GA_MEASUREMENT_ID);
 		}
 	}));
 
-	// Initialize scroll to top button
+	// Initialize scroll to top button, reading progress and the outline's active section
 	document.addEventListener('DOMContentLoaded', () => {
+		const progress = document.getElementById("reading-progress");
+		const article = document.getElementById("post-body");
+		if (progress && article) {
+			let frame = 0;
+			const update = () => {
+				frame = 0;
+				const rect = article.getBoundingClientRect();
+				const total = Math.max(rect.height - window.innerHeight, 1);
+				const ratio = Math.min(Math.max(-rect.top / total, 0), 1);
+				progress.style.transform = `scaleX(${ratio})`;
+			};
+			const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+			update();
+			window.addEventListener("scroll", schedule, { passive: true });
+			window.addEventListener("resize", schedule, { passive: true });
+		}
+
+		const outlineLinks = Array.from(document.querySelectorAll("[data-outline-link]"));
+		if (outlineLinks.length && article) {
+			const headingEls = outlineLinks
+				.map((link) => document.getElementById(link.dataset.outlineLink))
+				.filter(Boolean);
+			const setActive = (id) => {
+				outlineLinks.forEach((link) => {
+					link.dataset.active = String(link.dataset.outlineLink === id);
+				});
+			};
+			const headingObserver = new IntersectionObserver((entries) => {
+				// The active section is the last heading that has scrolled above the reading line.
+				const line = window.innerHeight * 0.3;
+				let current = headingEls[0]?.id;
+				headingEls.forEach((el) => {
+					if (el.getBoundingClientRect().top - line <= 0) current = el.id;
+				});
+				setActive(current);
+			}, { rootMargin: "0px 0px -70% 0px", threshold: [0, 1] });
+			headingEls.forEach((el) => headingObserver.observe(el));
+		}
+
 		const scrollBtn = document.getElementById("to-top-btn");
 		const targetHeader = document.getElementById("blog-hero");
 
@@ -169,48 +213,82 @@ const hasAnalytics = Boolean(import.meta.env.PUBLIC_GA_MEASUREMENT_ID);
 	}
 </script>
 
-<BaseLayout meta={{ title, description, articleDate, ogImage: socialImage }}>
-	<div class="gap-x-10 lg:flex lg:items-start">
+<BaseLayout meta={{ title, description, articleDate, ogImage: socialImage }} wide>
+	<div
+		id="reading-progress"
+		class="pointer-events-none fixed inset-x-0 top-0 z-50 h-[2px] origin-left scale-x-0 bg-accent shadow-[0_0_12px_var(--theme-glow)]"
+		aria-hidden="true"
+	>
+	</div>
+	<div class="gap-x-16 lg:grid lg:grid-cols-[minmax(0,1fr)_14rem]">
+		<article class="mx-auto w-full max-w-measure break-words lg:mx-0">
+			<div id="blog-hero">
+				<div class="mb-10 flex items-center justify-between gap-4">
+					<a href="/posts" class="group font-mono text-xs text-muted transition-colors hover:text-accent">
+						<span class="inline-block transition-transform group-hover:-translate-x-1">←</span> all posts
+					</a>
+					<LanguageSelector currentLanguage={currentLanguage} />
+				</div>
+				<BlogHero content={post} readingMinutes={readingMinutes} />
+			</div>
+			<div class="reveal mt-12 flex items-center gap-4 text-accent" style="--i:3" aria-hidden="true">
+				<span class="h-px flex-1 bg-line"></span>
+				<span class="font-mono text-xs">✦</span>
+				<span class="h-px flex-1 bg-line"></span>
+			</div>
+			<div id="post-body" class="post-prose prose prose-ink mt-12 max-w-none">
+				<slot />
+			</div>
+			<div
+				class="mt-20 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-elev px-4 py-3 font-mono text-[0.6875rem] text-muted"
+			>
+				<span>{wordCount.toLocaleString("en-US")} words · {readingMinutes} min</span>
+				<span class="flex items-center gap-4">
+					{translatedPost && (
+						<a href={`/posts/${translatedPost.slug}`} class="transition-colors hover:text-accent">
+							{translatedPost.data.language === "es" ? "leer en español" : "read in english"}
+						</a>
+					)}
+					<span><span class="text-accent">EOF</span> thanks for reading</span>
+				</span>
+			</div>
+			<div class="mt-10 lg:hidden">
+				<MonetizationButtons />
+			</div>
+		</article>
 		{
-			!!headings.length && (
-				<aside class="sticky top-20 order-2 -me-32 hidden basis-64 lg:block">
-					<h2 class="font-semibold">Table of Contents</h2>
-					<ul class="mt-4 text-xs">
-						{headings.map(({ depth, slug, text }: Heading) => (
-							<li class="hover:text-accent line-clamp-2">
-								<a
-									class={`block ${depth <= 2 ? "mt-3" : "mt-2 ps-3 text-[0.6875rem]"}`}
-									href={`#${slug}`}
-									aria-label={`Scroll to section: ${text}`}
-								>
-									<span>{"#".repeat(depth)}</span> {text}
-								</a>
-							</li>
-						))}
-					</ul>
-					<div class="mt-4">
-						<MonetizationButtons />
+			!!outline.length && (
+				<aside class="hidden lg:block">
+					<div class="sticky top-28">
+						<div class="flex gap-5 border-b border-line font-mono text-xs">
+							<span class="-mb-px border-b-2 border-accent pb-2 text-ink">Outline</span>
+						</div>
+						<ol class="mt-4 space-y-0.5 border-s border-line font-mono text-[0.75rem]">
+							{outline.map(({ depth, slug, text }: Heading) => (
+								<li>
+									<a
+										data-outline-link={slug}
+										data-active="false"
+										class={`-ms-px block border-s-2 border-transparent py-1.5 pe-2 leading-snug text-muted transition-colors hover:text-ink data-[active=true]:border-accent data-[active=true]:text-ink ${depth <= 2 ? "ps-3" : "ps-6 text-[0.6875rem]"}`}
+										href={`#${slug}`}
+										aria-label={`Scroll to section: ${text}`}
+									>
+										<span class="line-clamp-2">{text}</span>
+									</a>
+								</li>
+							))}
+						</ol>
+						<div class="mt-10">
+							<MonetizationButtons />
+						</div>
 					</div>
 				</aside>
 			)
 		}
-		<article class="flex-grow break-words">
-			<div id="blog-hero">
-				<div class="flex justify-end mb-4">
-					<LanguageSelector currentLanguage={currentLanguage} />
-				</div>
-				<BlogHero content={post} />
-			</div>
-			<div
-				class="prose prose-sm prose-cactus mt-12 prose-headings:font-semibold prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-accent prose-headings:before:content-['#'] prose-th:before:content-none"
-			>
-				<slot />
-			</div>
-		</article>
 	</div>
 	<button
 		id="to-top-btn"
-		class="z-90 fixed bottom-8 end-4 flex h-10 w-10 translate-y-28 items-center justify-center rounded-full border-2 border-transparent bg-zinc-200 text-3xl opacity-0 transition-all duration-300 hover:border-zinc-400 data-[show=true]:translate-y-0 data-[show=true]:opacity-100 dark:bg-zinc-700 sm:end-8 sm:h-12 sm:w-12"
+		class="fixed bottom-6 end-5 z-40 flex h-11 w-11 translate-y-24 items-center justify-center rounded-full border border-line bg-elev text-ink-soft opacity-0 shadow-lg transition-all duration-300 hover:border-accent hover:text-accent data-[show=true]:translate-y-0 data-[show=true]:opacity-100 sm:end-8"
 		aria-label="Back to Top"
 		data-show="false"
 		><svg
@@ -219,14 +297,41 @@ const hasAnalytics = Boolean(import.meta.env.PUBLIC_GA_MEASUREMENT_ID);
 			focusable="false"
 			fill="none"
 			viewBox="0 0 24 24"
-			stroke-width="2"
+			stroke-width="1.6"
 			stroke="currentColor"
-			class="h-6 w-6"
+			class="h-5 w-5"
 		>
 			<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"></path>
 		</svg>
 	</button>
-	<div class="mt-4 lg:hidden">
-		<MonetizationButtons />
-	</div>
 </BaseLayout>
+
+<style is:global>
+	/* Editor-style heading markers, like a markdown buffer. */
+	.post-prose h2::before,
+	.post-prose h3::before {
+		font-family: var(--font-mono);
+		font-size: 0.7em;
+		font-weight: 400;
+		color: var(--theme-accent);
+		margin-inline-end: 0.5em;
+		vertical-align: 0.1em;
+	}
+	.post-prose h2::before {
+		content: "#";
+	}
+	.post-prose h3::before {
+		content: "##";
+	}
+
+	/* A drop cap on the opening paragraph, set like a printed book. */
+	.post-prose > p:first-of-type::first-letter {
+		float: left;
+		font-family: var(--font-serif);
+		font-size: 4.1em;
+		line-height: 0.82;
+		font-weight: 500;
+		padding: 0.08em 0.1em 0 0;
+		color: var(--theme-accent);
+	}
+</style>

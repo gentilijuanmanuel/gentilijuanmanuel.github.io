@@ -7,27 +7,69 @@ import { getCollection } from "astro:content";
 interface Props extends IElement {
 	post: CollectionEntry<"post">;
 	withDesc?: boolean;
+	/** Position in a list, rendered like a chapter number in a table of contents. */
+	index?: number;
 }
 
-const { post, as: Element = "div", withDesc = false } = Astro.props;
+const { post, as: Element = "div", withDesc = false, index } = Astro.props;
 const date = new Date(post.data.publishDate);
 const datetime = date.toISOString();
 const postDate = getFormattedDate(date);
 
 // Get the Spanish version if it exists
 const allPosts = await getCollection("post");
-const spanishPost = allPosts.find(p => p.slug === post.data.translationSlug);
+const spanishPost = allPosts.find((p) => p.slug === post.data.translationSlug);
 ---
 
-<time datetime={datetime} class="min-w-[120px] text-gray-500">{postDate}</time>
-<Element>
-	<a href={`/posts/${post.slug}`} class="cactus-link" rel="prefetch">
-		{post.data.title}
-	</a>
-	{spanishPost && (
-		<span class="text-gray-500 ml-2">
-			(<a href={`/posts/${spanishPost.slug}`} class="cactus-link" rel="prefetch">Spanish version</a>)
-		</span>
-	)}
-</Element>
-{withDesc && <q class="line-clamp-3 block italic">{post.data.description}</q>}
+<div class="group relative -mx-3 rounded-lg px-3 py-4">
+	<div class="flex items-baseline gap-3">
+		{
+			typeof index === "number" && (
+				<span class="w-7 shrink-0 font-mono text-[0.6875rem] text-muted transition-colors group-hover:text-accent">
+					{String(index + 1).padStart(2, "0")}
+				</span>
+			)
+		}
+		<Element class="min-w-0 font-serif text-[1.1875rem] font-normal leading-snug text-ink sm:text-xl">
+			<a
+				href={`/posts/${post.slug}`}
+				rel="prefetch"
+				class="transition-colors duration-200 after:absolute after:inset-0 after:content-[''] group-hover:text-accent"
+			>
+				<span
+					class="me-1 inline-block w-0 -translate-x-2 overflow-hidden align-baseline font-mono text-accent opacity-0 transition-all duration-300 group-hover:w-4 group-hover:translate-x-0 group-hover:opacity-100"
+					aria-hidden="true">›</span
+				>{post.data.title}
+			</a>
+		</Element>
+		<span
+			class="hidden h-px min-w-[2rem] flex-1 translate-y-[-0.3em] border-b border-dotted opacity-40 sm:block"
+			style="border-color: var(--theme-muted)"
+			aria-hidden="true"></span>
+		<time datetime={datetime} class="hidden shrink-0 font-mono text-[0.75rem] text-muted sm:block">
+			{postDate}
+		</time>
+	</div>
+	<div class={`mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.75rem] text-muted ${typeof index === "number" ? "ps-10" : ""}`}>
+		<time datetime={datetime} class="sm:hidden">{postDate}</time>
+		{
+			spanishPost && (
+				<a
+					href={`/posts/${spanishPost.slug}`}
+					rel="prefetch"
+					class="relative z-10 rounded border border-line px-1.5 py-0.5 text-[0.625rem] uppercase tracking-wider transition-colors hover:border-accent hover:text-accent"
+					aria-label={`Read "${post.data.title}" in Spanish`}
+				>
+					es
+				</a>
+			)
+		}
+	</div>
+	{
+		withDesc && (
+			<p class={`mt-2 line-clamp-2 font-serif text-base italic text-ink-soft ${typeof index === "number" ? "ps-10" : ""}`}>
+				{post.data.description}
+			</p>
+		)
+	}
+</div>

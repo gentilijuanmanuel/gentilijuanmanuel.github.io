@@ -1,0 +1,201 @@
+---
+import { getCollection } from "astro:content";
+import { MENU_LINKS } from "@/data/constants";
+import { sortMDByDate, getFormattedDate } from "@/utils";
+
+// Everything a reader can jump to, serialised once at build time.
+const posts = sortMDByDate(await getCollection("post"));
+const entries = [
+	...MENU_LINKS.map((link) => ({
+		kind: "page",
+		title: link.title,
+		hint: link.path,
+		href: link.path,
+	})),
+	{ kind: "page", title: "Tags", hint: "/tags", href: "/tags" },
+	...posts.map((post) => ({
+		kind: "post",
+		title: post.data.title,
+		hint: `${post.data.language.toUpperCase()} · ${getFormattedDate(post.data.publishDate)}`,
+		href: `/posts/${post.slug}`,
+	})),
+];
+const serialized = JSON.stringify(entries).replace(/</g, "\\u003c");
+---
+
+<dialog
+	id="command-palette"
+	class="m-0 mx-auto mt-[12vh] w-[min(36rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-line bg-bg p-0 text-ink shadow-2xl backdrop:bg-black/40 backdrop:backdrop-blur-sm"
+	aria-label="Command palette"
+>
+	<div class="flex items-center gap-3 border-b border-line px-4">
+		<span class="font-mono text-sm text-accent" aria-hidden="true">❯</span>
+		<input
+			id="command-input"
+			type="text"
+			autocomplete="off"
+			spellcheck="false"
+			placeholder="jump to a post or page…"
+			class="h-14 flex-1 bg-transparent font-mono text-sm text-ink placeholder:text-muted focus:outline-none"
+			role="combobox"
+			aria-expanded="true"
+			aria-controls="command-results"
+			aria-autocomplete="list"
+		/>
+		<span class="kbd">esc</span>
+	</div>
+	<ul id="command-results" role="listbox" class="max-h-[50vh] overflow-y-auto p-2 font-mono text-[0.8125rem]"></ul>
+	<div class="flex items-center gap-4 border-t border-line px-4 py-2.5 font-mono text-[0.6875rem] text-muted">
+		<span><span class="kbd">↑</span> <span class="kbd">↓</span> navigate</span>
+		<span><span class="kbd">↵</span> open</span>
+	</div>
+</dialog>
+
+<script id="command-palette-data" type="application/json" is:inline set:html={serialized}></script>
+
+<script>
+	type Entry = { kind: "page" | "post"; title: string; hint: string; href: string };
+
+	const dialog = document.getElementById("command-palette") as HTMLDialogElement | null;
+	const input = document.getElementById("command-input") as HTMLInputElement | null;
+	const list = document.getElementById("command-results") as HTMLUListElement | null;
+	const dataEl = document.getElementById("command-palette-data");
+
+	if (dialog && input && list && dataEl) {
+		let entries: Entry[] = [];
+		try {
+			entries = JSON.parse(dataEl.textContent || "[]");
+		} catch {
+			entries = [];
+		}
+
+		let results: Entry[] = entries;
+		let active = 0;
+
+		// Accent-insensitive, so "fabula" finds "fábula".
+		const normalize = (value: string) =>
+			value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+		const render = () => {
+			list.replaceChildren();
+			if (results.length === 0) {
+				const empty = document.createElement("li");
+				empty.className = "px-3 py-6 text-center text-muted";
+				empty.textContent = "nothing on this shelf.";
+				list.append(empty);
+				return;
+			}
+			results.forEach((entry, index) => {
+				const item = document.createElement("li");
+				item.id = `command-option-${index}`;
+				item.setAttribute("role", "option");
+				item.setAttribute("aria-selected", String(index === active));
+				item.className =
+					"group flex cursor-pointer items-center gap-3 rounded-md px-3 py-2.5 text-ink-soft aria-selected:bg-elev aria-selected:text-ink";
+
+				const marker = document.createElement("span");
+				marker.className = "w-3 text-accent opacity-0 group-aria-selected:opacity-100";
+				marker.textContent = "›";
+
+				const title = document.createElement("span");
+				title.className = "flex-1 truncate";
+				title.textContent = entry.title;
+
+				const hint = document.createElement("span");
+				hint.className = "shrink-0 text-[0.6875rem] text-muted";
+				hint.textContent = entry.hint;
+
+				item.append(marker, title, hint);
+				item.addEventListener("mousemove", () => {
+					if (active !== index) {
+						active = index;
+						syncActive();
+					}
+				});
+				item.addEventListener("click", () => go(entry));
+				list.append(item);
+			});
+			syncActive();
+		};
+
+		const syncActive = () => {
+			list.querySelectorAll("[role=option]").forEach((node, index) => {
+				node.setAttribute("aria-selected", String(index === active));
+			});
+			input.setAttribute("aria-activedescendant", `command-option-${active}`);
+			list.querySelector(`#command-option-${active}`)?.scrollIntoView({ block: "nearest" });
+		};
+
+		const filter = () => {
+			const query = normalize(input.value.trim());
+			results = query
+				? entries.filter((entry) => normalize(`${entry.title} ${entry.hint}`).includes(query))
+				: entries;
+			active = 0;
+			render();
+		};
+
+		const go = (entry: Entry | undefined) => {
+			if (!entry) return;
+			dialog.close();
+			window.location.href = entry.href;
+		};
+
+		const open = () => {
+			if (dialog.open) return;
+			input.value = "";
+			filter();
+			dialog.showModal();
+			input.focus();
+		};
+
+		input.addEventListener("input", filter);
+		input.addEventListener("keydown", (event) => {
+			if (event.key === "ArrowDown") {
+				event.preventDefault();
+				active = Math.min(active + 1, results.length - 1);
+				syncActive();
+			} else if (event.key === "ArrowUp") {
+				event.preventDefault();
+				active = Math.max(active - 1, 0);
+				syncActive();
+			} else if (event.key === "Enter") {
+				event.preventDefault();
+				go(results[active]);
+			}
+		});
+
+		// Clicking the backdrop closes the palette.
+		dialog.addEventListener("click", (event) => {
+			if (event.target === dialog) dialog.close();
+		});
+
+		document.querySelectorAll("[data-open-palette]").forEach((trigger) => {
+			trigger.addEventListener("click", open);
+		});
+
+		window.addEventListener("keydown", (event) => {
+			const target = event.target as HTMLElement | null;
+			const typing = target?.closest("input, textarea, [contenteditable=true]") && target !== input;
+			if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+				event.preventDefault();
+				dialog.open ? dialog.close() : open();
+			} else if (event.key === "/" && !typing && !dialog.open) {
+				event.preventDefault();
+				open();
+			}
+		});
+	}
+</script>
+
+<style>
+	dialog[open] {
+		animation: palette-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	@keyframes palette-in {
+		from {
+			opacity: 0;
+			transform: translateY(-8px) scale(0.98);
+		}
+	}
+</style>

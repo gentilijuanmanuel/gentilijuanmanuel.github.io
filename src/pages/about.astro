@@ -11,19 +11,27 @@ const meta = {
 ---
 
 <PageLayout meta={meta}>
-	<div class="space-y-6">
-		<div class="flex justify-center mb-8">
-			<Image
-				src={profileImg}
-				class="h-32 w-32 rounded-full border-2 border-textColor object-cover"
-				alt="A picture of me with my dog"
-				loading="eager"
-			/>
-		</div>
-		<div class="flex justify-center mb-6">
-			<LanguageSelector currentLanguage="en" />
-		</div>
-		<div id="about-content-en" class="space-y-6">
+	<div class="about">
+		<header class="mb-14 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+			<div class="reveal flex items-end gap-6" style="--i:0">
+				<div class="paper-page shrink-0 p-2 pb-6" style="rotate: -2deg">
+					<Image
+						src={profileImg}
+						class="h-32 w-28 rounded-[4px] object-cover sepia-[.35] transition-[filter] duration-700 hover:sepia-0"
+						alt="A picture of me with my dog"
+						loading="eager"
+					/>
+				</div>
+				<div>
+					<p class="eyebrow"><span class="text-accent">$</span> whoami</p>
+					<p class="mt-2 font-serif text-2xl font-medium leading-tight text-ink">Juan Manuel<br />Gentili</p>
+				</div>
+			</div>
+			<div class="reveal" style="--i:1">
+				<LanguageSelector currentLanguage="en" />
+			</div>
+		</header>
+		<div id="about-content-en" class="reveal about-body" style="--i:2">
 			<h1 class="title">Juan, the engineer</h1>
 			<p>
 				Being able to build <i>something</i> from <i>nothing</i>, going from 0 to 1,
@@ -83,7 +91,7 @@ const meta = {
 				Working together.
 			</p>
 		</div>
-		<div id="about-content-es" class="space-y-6" style="display:none">
+		<div id="about-content-es" class="about-body" style="display:none">
 			<h1 class="title">Juan, el ingeniero</h1>
 			<p>
 				Poder construir <i>algo</i> de la <i>nada</i>, transicionar de 0 a 1,
@@ -146,6 +154,64 @@ const meta = {
 		</div>
 	</div>
 </PageLayout>
+
+<style is:global>
+	.about-body {
+		font-size: 1.1875rem;
+		line-height: 1.75;
+		color: var(--theme-ink);
+	}
+	.about-body > * + * {
+		margin-top: 1.25em;
+	}
+	.about-body .title {
+		margin-top: 2.5em;
+		margin-bottom: 0.25em;
+	}
+	.about-body .title:first-child {
+		margin-top: 0;
+	}
+	.about-body .title::before {
+		display: block;
+		margin-bottom: 0.6rem;
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--theme-muted);
+	}
+	.about-body .title:first-child::before {
+		content: "§ 01 · the engineer";
+	}
+	.about-body .title:not(:first-child)::before {
+		content: "§ 02 · the writer";
+	}
+	#about-content-es .title:first-child::before {
+		content: "§ 01 · el ingeniero";
+	}
+	#about-content-es .title:not(:first-child)::before {
+		content: "§ 02 · el escritor";
+	}
+	.about-body i {
+		color: var(--theme-accent);
+	}
+	.about-body hr {
+		border: none;
+		margin: 3em 0;
+		text-align: center;
+	}
+	.about-body hr::after {
+		content: "✦  ✦  ✦";
+		color: var(--theme-accent);
+		font-size: 0.8em;
+		letter-spacing: 0.5em;
+	}
+	.about-body hr + p,
+	.about-body hr + p + p {
+		font-style: italic;
+		color: var(--theme-ink-soft);
+	}
+</style>
 
 <script is:inline>
 if (typeof window !== 'undefined') {
