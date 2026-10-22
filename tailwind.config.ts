@@ -34,6 +34,7 @@ export default {
 				// Newsreader carries the reading experience, JetBrains Mono the interface.
 				serif: ["Newsreader", ...fontFamily.serif],
 				mono: ['"JetBrains Mono"', ...fontFamily.mono],
+				typewriter: ['"Special Elite"', '"Courier New"', ...fontFamily.mono],
 				sans: [...fontFamily.sans],
 			},
 			maxWidth: {
