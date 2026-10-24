@@ -19,6 +19,14 @@ const COVER_TIMEOUT_MS = 20_000;
 /** Parallel cover downloads. */
 const COVER_CONCURRENCY = 6;
 
+/**
+ * How many words of highlights a book page shows. Publishing every highlight
+ * would reproduce large parts of some books (one runs to 29,000 words), so each
+ * page shows a selection. 1,000 words matches the quotation allowance in
+ * Argentina's copyright law (Ley 11.723, art. 10).
+ */
+export const WORD_BUDGET = 1000;
+
 /** Spines for books whose cover could not be used, picked per book from the slug. */
 const FALLBACK_SPINES = [
 	"#7a2e2a",
@@ -47,7 +55,7 @@ export interface LibraryBook {
 	author: string | null;
 	searchUrl: string;
 	highlightCount: number;
-	/** Every highlight, in reading order. */
+	/** A selection of up to `WORD_BUDGET` words, in reading order. */
 	highlights: LibraryHighlight[];
 	firstRead: Date;
 	lastRead: Date;
@@ -167,6 +175,52 @@ function byReadingOrder(a: BookHighlight, b: BookHighlight): number {
 	return a.highlightedAt.localeCompare(b.highlightedAt);
 }
 
+const wordCount = (text: string) => text.split(/\s+/).filter(Boolean).length;
+
+/**
+ * Orders items so that every prefix is spread across the whole list: the
+ * middle first, then the quarters, then the eighths, and so on.
+ */
+function spreadOrder<T>(items: readonly T[]): T[] {
+	const order: T[] = [];
+	const seen = new Set<number>();
+	for (let parts = 1; seen.size < items.length; parts *= 2) {
+		for (let i = 0; i < parts; i++) {
+			const index = Math.floor(((i + 0.5) * items.length) / parts);
+			if (seen.has(index)) continue;
+			seen.add(index);
+			order.push(items[index]!);
+		}
+	}
+	return order;
+}
+
+/**
+ * Picks the highlights a book page shows, within `WORD_BUDGET` words:
+ * favourites first, then the rest spread through the book so the selection
+ * walks from start to end instead of bunching in the first chapter. A
+ * highlight that doesn't fit is skipped in favour of shorter ones after it.
+ * Returned in reading order.
+ */
+function selectHighlights(highlights: readonly BookHighlight[]): BookHighlight[] {
+	const ordered = [...highlights].sort(byReadingOrder);
+	const candidates = [
+		...ordered.filter((highlight) => highlight.favorite),
+		...spreadOrder(ordered.filter((highlight) => !highlight.favorite)),
+	];
+
+	const picked = new Set<BookHighlight>();
+	let words = 0;
+	for (const highlight of candidates) {
+		const count = wordCount(highlight.text);
+		if (words + count > WORD_BUDGET) continue;
+		picked.add(highlight);
+		words += count;
+	}
+
+	return ordered.filter((highlight) => picked.has(highlight));
+}
+
 /** Runs `task` over `items` with at most `limit` in flight, keeping the input order. */
 async function mapWithConcurrency<T, R>(
 	items: readonly T[],
@@ -205,7 +259,7 @@ async function buildLibrary(): Promise<LibraryBook[]> {
 			author: book.author,
 			searchUrl: book.searchUrl,
 			highlightCount: book.highlights.length,
-			highlights: [...book.highlights].sort(byReadingOrder).map((highlight) => ({
+			highlights: selectHighlights(book.highlights).map((highlight) => ({
 				id: highlight.id,
 				text: highlight.text,
 				location: formatLocation(highlight),

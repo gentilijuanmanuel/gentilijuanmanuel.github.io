@@ -2,7 +2,7 @@
 import type { GetStaticPathsResult } from "astro";
 import PageLayout from "@/layouts/Base";
 import BookCover from "@/components/library/BookCover";
-import { getLibrary, readingPeriod, type LibraryBook } from "@/utils/library";
+import { getLibrary, readingPeriod, WORD_BUDGET, type LibraryBook } from "@/utils/library";
 
 export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 	const library = await getLibrary();
@@ -22,12 +22,14 @@ const { book, newer, older } = Astro.props;
 
 const meta = {
 	title: book.title,
-	description: `Passages I highlighted in ${book.title}${
+	description: `A selection of the passages I highlighted in ${book.title}${
 		book.author ? `, by ${book.author}` : ""
 	}.`,
 };
 
 // Thicker book for more highlights, on the same curve as its spine on the shelf.
+const showingAll = book.highlights.length === book.highlightCount;
+
 const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlightCount) * 2.4)));
 ---
 
@@ -99,7 +101,13 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 					<h2 id="passages-heading" class="font-mono text-xs uppercase tracking-[0.16em] text-ink">
 						Passages
 					</h2>
-					<p class="font-mono text-[0.6875rem] text-muted">in reading order</p>
+					<p class="font-mono text-[0.6875rem] text-muted">
+						{
+							showingAll
+								? "in reading order"
+								: `${book.highlights.length} of ${book.highlightCount}, in reading order`
+						}
+					</p>
 				</header>
 				<ol>
 					{
@@ -125,6 +133,12 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 						))
 					}
 				</ol>
+				<p
+					class="mt-8 border-t border-line pt-5 font-mono text-[0.6875rem] leading-relaxed text-muted"
+				>
+					{showingAll ? "Every passage I highlighted" : "A portion of what I highlighted"}, up to
+					{WORD_BUDGET.toLocaleString("en-US")} words per book.
+				</p>
 			</section>
 		</div>
 	</div>
