@@ -12,11 +12,11 @@ translationSlug: "terry-davis-part-2"
 # Índice completo
 
 0. Rabbit hole (en
-   [Parte I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1es/))
+   [Parte I](/posts/terry-davis-part-1es/))
 1. Intento de biografía (en
-   [Parte I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1es/))
+   [Parte I](/posts/terry-davis-part-1es/))
 2. Utilitarismo (en
-   [Parte I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1es/))
+   [Parte I](/posts/terry-davis-part-1es/))
 3. **Pararse sobre los hombros de los gigantes: efectos secundarios**
 4. Complejo vs. simple (próximamente)
 5. Raro y brutalmente honesto (próximamente)
@@ -39,7 +39,7 @@ de Dios»](https://thenewstack.io/the-troubled-legacy-of-terry-davis-gods-lonely
 En mis años de universidad tuve una pequeña obsesión con Steve Jobs, como
 calculo habrán tenido varios estudiantes de ciencias de la computación o
 ingeniería en sistemas en algún momento de sus vidas. Algo mencioné en
-[este post](https://gentilijuanmanuel.github.io/posts/a-healthier-self/). Leí la
+[este post](/posts/a-healthier-self/). Leí la
 biografía de Walter Issacson, me miré todas las películas sobre su persona (_for
 the record_: la que más me gustó fue _Steve Jobs: The Man in the Machine_), sus
 entrevistas, y convencí a mis padres para que me compren mi primer dispositivo

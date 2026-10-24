@@ -10,13 +10,13 @@ translationSlug: "terry-davis-part-3"
 # Índice completo
 
 0. Rabbit hole (en
-   [Parte I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1es/))
+   [Parte I](/posts/terry-davis-part-1es/))
 1. Intento de biografía (en
-   [Parte I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1es/))
+   [Parte I](/posts/terry-davis-part-1es/))
 2. Utilitarismo (en
-   [Parte I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1es/))
+   [Parte I](/posts/terry-davis-part-1es/))
 3. Pararse sobre los hombros de los gigantes: efectos secundarios (en
-   [Parte II](https://gentilijuanmanuel.github.io/posts/terry-davis-part-2es/))
+   [Parte II](/posts/terry-davis-part-2es/))
 4. **Complejo vs. simple**
 5. **Raro y brutalmente honesto**
 6. **Crear como medicina**
