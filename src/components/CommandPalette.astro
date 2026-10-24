@@ -2,9 +2,11 @@
 import { getCollection } from "astro:content";
 import { MENU_LINKS } from "@/data/constants";
 import { sortMDByDate, getFormattedDate } from "@/utils";
+import { getLibrary } from "@/utils/library";
 
 // Everything a reader can jump to, serialised once at build time.
 const posts = sortMDByDate(await getCollection("post"));
+const books = await getLibrary();
 const entries = [
 	...MENU_LINKS.map((link) => ({
 		kind: "page",
@@ -18,6 +20,12 @@ const entries = [
 		title: post.data.title,
 		hint: `${post.data.language.toUpperCase()} · ${getFormattedDate(post.data.publishDate)}`,
 		href: `/posts/${post.slug}`,
+	})),
+	...books.map((book) => ({
+		kind: "book",
+		title: book.title,
+		hint: book.author ? `book · ${book.author}` : "book",
+		href: `/library/${book.slug}`,
 	})),
 ];
 const serialized = JSON.stringify(entries).replace(/</g, "\\u003c");
@@ -35,7 +43,7 @@ const serialized = JSON.stringify(entries).replace(/</g, "\\u003c");
 			type="text"
 			autocomplete="off"
 			spellcheck="false"
-			placeholder="jump to a post or page…"
+			placeholder="jump to a post, page or book…"
 			class="h-14 flex-1 bg-transparent font-mono text-sm text-ink placeholder:text-muted focus:outline-none"
 			role="combobox"
 			aria-expanded="true"
@@ -54,7 +62,7 @@ const serialized = JSON.stringify(entries).replace(/</g, "\\u003c");
 <script id="command-palette-data" type="application/json" is:inline set:html={serialized}></script>
 
 <script>
-	type Entry = { kind: "page" | "post"; title: string; hint: string; href: string };
+	type Entry = { kind: "page" | "post" | "book"; title: string; hint: string; href: string };
 
 	const dialog = document.getElementById("command-palette") as HTMLDialogElement | null;
 	const input = document.getElementById("command-input") as HTMLInputElement | null;
