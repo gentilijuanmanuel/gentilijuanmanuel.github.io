@@ -2,6 +2,7 @@
 import PageLayout from "@/layouts/Base";
 import BookCover from "@/components/library/BookCover";
 import { getLibrary, hashOf, readingPeriod, shelvesByYear } from "@/utils/library";
+import { SOCIAL_LINKS } from "@/data/constants";
 
 const library = await getLibrary();
 const shelves = shelvesByYear(library);
@@ -55,7 +56,15 @@ let spineIndex = 0;
 				<p class="reveal mt-5 font-mono text-[0.75rem] text-muted" style="--i:3">
 					{library.length} books <span class="text-accent">◆</span>{" "}
 					{totalHighlights.toLocaleString("en-US")} highlights <span class="text-accent">◆</span>{" "}
-					{firstYear} → now
+					{firstYear} → now <span class="text-accent">◆</span>{" "}
+					<a
+						class="transition-colors hover:text-accent"
+						href={SOCIAL_LINKS.goodreads}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						goodreads ↗
+					</a>
 				</p>
 			)
 		}

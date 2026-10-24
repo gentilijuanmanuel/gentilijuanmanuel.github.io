@@ -23,6 +23,7 @@ export const SOCIAL_LINKS = {
 	email: "gentilijuanmanuel@gmail.com",
 	medium: "https://medium.com/@jmgentili",
 	substack: "https://substack.com/@jmgentili",
+	goodreads: "https://www.goodreads.com/user/show/68740365-juan-manuel-gentili",
 	linkedin: "https://www.linkedin.com/in/juan-manuel-gentili",
 };
 
