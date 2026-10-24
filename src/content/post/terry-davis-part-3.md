@@ -10,13 +10,13 @@ translationSlug: "terry-davis-part-3es"
 # Complete index
 
 0. Rabbit Hole (in
-   [Part I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1/))
+   [Part I](/posts/terry-davis-part-1/))
 1. Attempt at biography (in
-   [Part I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1/))
+   [Part I](/posts/terry-davis-part-1/))
 2. Utilitarianism (in
-   [Part I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1/))
+   [Part I](/posts/terry-davis-part-1/))
 3. Standing on the shoulders of giants: side effects (in
-   [Part II](https://gentilijuanmanuel.github.io/posts/terry-davis-part-2/))
+   [Part II](/posts/terry-davis-part-2/))
 4. **Complex vs. simple**
 5. **Weird and brutally honest**
 6. **Creating as medicine**

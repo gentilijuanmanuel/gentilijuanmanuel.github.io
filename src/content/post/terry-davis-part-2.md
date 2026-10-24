@@ -12,11 +12,11 @@ translationSlug: "terry-davis-part-2es"
 # Complete index
 
 0. Rabbit Hole (in
-   [Part I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1/))
+   [Part I](/posts/terry-davis-part-1/))
 1. Attempt at biography (in
-   [Part I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1/))
+   [Part I](/posts/terry-davis-part-1/))
 2. Utilitarianism (in
-   [Part I](https://gentilijuanmanuel.github.io/posts/terry-davis-part-1/))
+   [Part I](/posts/terry-davis-part-1/))
 3. **Standing on the shoulders of giants: side effects**
 4. Complex vs. simple (coming soon)
 5. Weird and brutally honest (coming soon)
@@ -38,7 +38,7 @@ translationSlug: "terry-davis-part-2es"
 In my college years I had a bit of an obsession with Steve Jobs, as I reckon
 several computer science or systems engineering students must have had at some
 point in their lives. Something I mentioned in
-[this post](https://gentilijuanmanuel.github.io/posts/a-healthier-self/). I read
+[this post](/posts/a-healthier-self/). I read
 Walter Issacson's biography, watched all the movies about him*(for the record*:
 the one I liked the most was _Steve Jobs: The Man in the Machine_), his
 interviews, and convinced my parents to buy me my first Apple device: a 2015
