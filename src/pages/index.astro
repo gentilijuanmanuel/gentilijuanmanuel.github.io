@@ -151,9 +151,14 @@ const allPostsByDate = sortMDByDate(englishPosts).slice(0, MAX_POSTS);
 	</section>
 
 	<section aria-labelledby="reading-heading" class="mt-28">
-		<header class="mb-6 border-b border-line pb-4">
-			<p class="eyebrow">§ 03</p>
-			<h2 id="reading-heading" class="title mt-2">Reading</h2>
+		<header class="mb-6 flex items-end justify-between gap-4 border-b border-line pb-4">
+			<div>
+				<p class="eyebrow">§ 03</p>
+				<h2 id="reading-heading" class="title mt-2">Reading</h2>
+			</div>
+			<a href="/library" class="font-mono text-xs text-muted transition-colors hover:text-accent"
+				>library →</a
+			>
 		</header>
 		<p class="max-w-xl text-lg leading-relaxed text-ink-soft">
 			Pages torn from whatever I'm reading. All my highlights are collected on my Readwise account,

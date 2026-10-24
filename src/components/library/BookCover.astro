@@ -1,0 +1,41 @@
+---
+import type { LibraryBook } from "@/utils/library";
+
+interface Props {
+	book: Pick<LibraryBook, "title" | "author" | "cover" | "spine">;
+	class?: string;
+	loading?: "lazy" | "eager";
+}
+
+const { book, class: className = "", loading = "lazy" } = Astro.props;
+---
+
+{
+	book.cover ? (
+		<img
+			class:list={["block aspect-[2/3] h-auto w-full object-cover", className]}
+			src={book.cover.src}
+			width={book.cover.width}
+			height={book.cover.height}
+			loading={loading}
+			decoding="async"
+			alt=""
+		/>
+	) : (
+		// No usable cover: a plain cloth binding with the title stamped on it.
+		// The wrapper is a size container, so the lettering scales with the cover.
+		<div
+			class:list={["aspect-[2/3] w-full overflow-hidden [container-type:inline-size]", className]}
+			style={`background-color:${book.spine.color};color:${book.spine.ink}`}
+			aria-hidden="true"
+		>
+			<div class="flex h-full flex-col justify-between p-[9cqw] text-left">
+				<span class="block h-px w-full bg-current opacity-40" />
+				<span class="font-serif text-[11cqw] font-medium leading-[1.1]">{book.title}</span>
+				<span class="font-mono text-[5.5cqw] uppercase tracking-[0.14em] opacity-75">
+					{book.author}
+				</span>
+			</div>
+		</div>
+	)
+}

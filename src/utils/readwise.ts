@@ -3,9 +3,10 @@
  *
  * The site is statically generated and hosted on GitHub Pages, so there is no
  * server at request time and the access token can never reach the browser.
- * Highlights are therefore pulled at build time (via the Readwise export API),
- * trimmed down to a small pool, and embedded in the page. Picking the 3
- * highlights that are actually shown happens client side, on every page load.
+ * Highlights are therefore pulled at build time (via the Readwise export API)
+ * and shared by two consumers: the homepage's Reading section, which embeds a
+ * small pool and picks 3 highlights client side on every page load, and the
+ * library (see `library.ts`), which renders a page per book.
  *
  * Token: https://readwise.io/access_token -> READWISE_ACCESS_TOKEN
  * API docs: https://readwise.io/api_deets
@@ -14,8 +15,9 @@
 const EXPORT_ENDPOINT = "https://readwise.io/api/v2/export/";
 
 /**
- * Where a highlight's source line points. Readwise's own highlight and book
- * urls require an account, so a reader clicking one lands on a login page.
+ * Where a library book's "find this book" link points. Readwise's own
+ * highlight and book urls require an account, so a reader clicking one lands
+ * on a login page.
  * A search link works for every book: only a handful carry an ISBN or ASIN,
  * so a direct book page is not an option for most of the library.
  *
@@ -31,14 +33,15 @@ const REQUEST_TIMEOUT_MS = 20_000;
 const MAX_PAGES = 25;
 
 /**
- * Highlights longer than this are dropped. The limit exists only to keep a
- * single quote from swallowing the section: the longest in the library runs to
+ * Highlights longer than this stay out of the homepage pool (the library
+ * shows every highlight). The limit exists only to keep a single quote from
+ * swallowing the Reading section: the longest in the library runs to
  * 7,500 characters. It is set well above the typical highlight, whose median
  * length is around 430 characters, so it trims the tail rather than the body.
  */
 const MAX_TEXT_LENGTH = 1500;
 
-/** Very short highlights are usually fragments without context. */
+/** Very short highlights are usually fragments without context, so they stay out of the homepage pool too. */
 const MIN_TEXT_LENGTH = 40;
 
 /**
@@ -49,6 +52,12 @@ const MIN_TEXT_LENGTH = 40;
  * there is little point pushing it far beyond that.
  */
 const POOL_SIZE = 60;
+
+/**
+ * Readwise's catch-all "book" for quotes pasted in by hand. It is not a book
+ * anyone read, so it stays off the shelves and out of the pool.
+ */
+const EXCLUDED_SLUGS = new Set(["quick-passages"]);
 
 /**
  * Only book highlights are shown. Readwise also returns "articles", "tweets"
@@ -65,13 +74,40 @@ export interface Highlight {
 	text: string;
 	title: string;
 	author: string | null;
-	/** A public link for the book, so readers without a Readwise account can follow it. */
+	/** The book's page in the library. */
 	url: string;
+}
+
+/** A highlight that passed the eligibility checks, with what the library needs to order it. */
+export interface BookHighlight {
+	id: number;
+	text: string;
+	/** Where the highlight sits in the book, in the unit `locationType` names. */
+	location: number | null;
+	locationType: string | null;
+	highlightedAt: string;
+	favorite: boolean;
+}
+
+/** One book, with duplicate Readwise entries for the same title merged. */
+export interface Book {
+	slug: string;
+	title: string;
+	author: string | null;
+	coverUrl: string | null;
+	/** A public link for the book, so readers without a Readwise account can follow it. */
+	searchUrl: string;
+	highlights: BookHighlight[];
 }
 
 interface ReadwiseHighlight {
 	id: number;
 	text: string;
+	location?: number | null;
+	location_type?: string | null;
+	highlighted_at?: string | null;
+	created_at?: string | null;
+	is_favorite?: boolean;
 	is_deleted?: boolean;
 	is_discard?: boolean;
 }
@@ -82,6 +118,7 @@ interface ReadwiseBook {
 	readable_title?: string | null;
 	author?: string | null;
 	category?: string | null;
+	cover_image_url?: string | null;
 	is_deleted?: boolean;
 	highlights?: ReadwiseHighlight[];
 }
@@ -92,7 +129,7 @@ interface ReadwiseExportResponse {
 	results?: ReadwiseBook[];
 }
 
-let cache: { pool: Highlight[]; expiresAt: number } | null = null;
+let cache: { books: Promise<Book[]>; expiresAt: number } | null = null;
 
 function getAccessToken(): string | undefined {
 	const fromViteEnv = import.meta.env.READWISE_ACCESS_TOKEN;
@@ -121,21 +158,84 @@ function bookSearchUrl(title: string, author: string | null): string {
 	return url.toString();
 }
 
-function toHighlight(book: ReadwiseBook, highlight: ReadwiseHighlight): Highlight | null {
-	if (highlight.is_deleted || highlight.is_discard) return null;
+/** Lowercase, accent-free and hyphenated: "De Qué Hablo" becomes "de-que-hablo". */
+export function slugify(value: string): string {
+	return value
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "")
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+}
 
-	const text = normalizeText(highlight.text ?? "");
-	if (text.length < MIN_TEXT_LENGTH || text.length > MAX_TEXT_LENGTH) return null;
-
+function bookTitle(book: ReadwiseBook): string {
 	// `readable_title` is not the display name its name suggests: for books
 	// imported as a file, Readwise fills it with the uploaded file name, such as
 	// "Slow-Productivity_cal-Newport". The clean name lives in `title`.
 	const title = (book.title || book.readable_title || "").trim();
-	if (!title) return null;
+	// Clippings imports sometimes carry the export date: "Swift Concurrency by Example 2024-11-15".
+	return title.replace(/\s+\d{4}-\d{2}-\d{2}$/, "");
+}
 
-	const author = book.author?.trim() || null;
+function toBookHighlight(highlight: ReadwiseHighlight): BookHighlight | null {
+	if (highlight.is_deleted || highlight.is_discard) return null;
 
-	return { id: highlight.id, text, title, author, url: bookSearchUrl(title, author) };
+	const text = normalizeText(highlight.text ?? "");
+	if (!text) return null;
+
+	return {
+		id: highlight.id,
+		text,
+		location: typeof highlight.location === "number" ? highlight.location : null,
+		locationType: highlight.location_type ?? null,
+		highlightedAt: highlight.highlighted_at || highlight.created_at || "",
+		favorite: Boolean(highlight.is_favorite),
+	};
+}
+
+/**
+ * Readwise keeps one entry per import, so a book read on two devices shows up
+ * twice. Entries are merged by title and author; two different books that share
+ * a title keep apart by adding the author to the second one's slug.
+ */
+function toBooks(entries: readonly ReadwiseBook[]): Book[] {
+	const byKey = new Map<string, Book>();
+	const takenSlugs = new Set<string>();
+
+	for (const entry of entries) {
+		const title = bookTitle(entry);
+		const titleSlug = slugify(title);
+		if (!titleSlug || EXCLUDED_SLUGS.has(titleSlug)) continue;
+
+		const highlights = (entry.highlights ?? [])
+			.map(toBookHighlight)
+			.filter((highlight): highlight is BookHighlight => highlight !== null);
+		if (highlights.length === 0) continue;
+
+		const author = entry.author?.trim() || null;
+		const key = `${titleSlug}|${slugify(author ?? "")}`;
+		const coverUrl = entry.cover_image_url?.trim() || null;
+
+		const existing = byKey.get(key);
+		if (existing) {
+			existing.highlights.push(...highlights);
+			existing.coverUrl ??= coverUrl;
+			continue;
+		}
+
+		const slug = takenSlugs.has(titleSlug) ? slugify(`${title} ${author ?? ""}`) : titleSlug;
+		takenSlugs.add(slug);
+		byKey.set(key, {
+			slug,
+			title,
+			author,
+			coverUrl,
+			searchUrl: bookSearchUrl(title, author),
+			highlights,
+		});
+	}
+
+	return [...byKey.values()];
 }
 
 async function fetchExportPage(
@@ -234,16 +334,7 @@ export function pickFromDistinctBooks(items: readonly Highlight[], count: number
 	return picked;
 }
 
-/**
- * Builds the pool of highlights embedded in the page.
- *
- * Never throws: a missing token or an unreachable API degrades to an empty
- * pool, and the Reading section simply renders without highlights instead of
- * failing the build.
- */
-export async function getHighlightPool(): Promise<Highlight[]> {
-	if (cache && cache.expiresAt > Date.now()) return cache.pool;
-
+async function fetchBooks(): Promise<Book[]> {
 	const token = getAccessToken();
 	if (!token) {
 		console.warn(
@@ -252,7 +343,7 @@ export async function getHighlightPool(): Promise<Highlight[]> {
 		return [];
 	}
 
-	const candidates: Highlight[] = [];
+	const entries: ReadwiseBook[] = [];
 
 	try {
 		let cursor: string | number | null | undefined;
@@ -263,11 +354,7 @@ export async function getHighlightPool(): Promise<Highlight[]> {
 			for (const book of data.results ?? []) {
 				if (book.is_deleted) continue;
 				if (!INCLUDED_CATEGORIES.has(book.category ?? "")) continue;
-
-				for (const highlight of book.highlights ?? []) {
-					const normalized = toHighlight(book, highlight);
-					if (normalized) candidates.push(normalized);
-				}
+				entries.push(book);
 			}
 
 			cursor = data.nextPageCursor;
@@ -275,15 +362,49 @@ export async function getHighlightPool(): Promise<Highlight[]> {
 		}
 	} catch (error) {
 		console.warn(
-			`[readwise] could not fetch highlights, the Reading section will render without them: ${
+			`[readwise] could not fetch highlights, the Reading section and the library will render without them: ${
 				error instanceof Error ? error.message : String(error)
 			}`
 		);
 		return [];
 	}
 
+	return toBooks(entries);
+}
+
+/**
+ * Every book with at least one highlight.
+ *
+ * Never throws: a missing token or an unreachable API degrades to an empty
+ * list, and the pages that use it render without highlights instead of
+ * failing the build. The request is shared, so the homepage and every library
+ * page cost a single export per build.
+ */
+export function getBooks(): Promise<Book[]> {
+	if (!cache || cache.expiresAt <= Date.now()) {
+		cache = { books: fetchBooks(), expiresAt: Date.now() + CACHE_TTL_MS };
+	}
+	return cache.books;
+}
+
+/** Builds the pool of highlights embedded in the homepage. */
+export async function getHighlightPool(): Promise<Highlight[]> {
+	const books = await getBooks();
+
+	const candidates: Highlight[] = books.flatMap((book) =>
+		book.highlights
+			.filter(({ text }) => text.length >= MIN_TEXT_LENGTH && text.length <= MAX_TEXT_LENGTH)
+			.map((highlight) => ({
+				id: highlight.id,
+				text: highlight.text,
+				title: book.title,
+				author: book.author,
+				url: `/library/${book.slug}`,
+			}))
+	);
+	if (candidates.length === 0) return [];
+
 	const pool = poolByBook(candidates, POOL_SIZE);
-	cache = { pool, expiresAt: Date.now() + CACHE_TTL_MS };
 
 	const booksInPool = new Set(pool.map((highlight) => highlight.title)).size;
 	console.info(

@@ -34,9 +34,13 @@ const isActive = (path: string) =>
 						href={link.path}
 						rel="prefetch"
 						aria-current={isActive(link.path) ? "page" : false}
-						class="group relative px-2.5 py-2 text-ink-soft transition-colors hover:text-ink aria-[current=page]:text-ink sm:px-3"
+						class:list={[
+							"group relative whitespace-nowrap px-2 py-2 text-ink-soft transition-colors hover:text-ink aria-[current=page]:text-ink sm:px-3",
+							// On phones the name already links home, which leaves room for the rest.
+							{ "hidden sm:inline-block": link.path === "/" },
+						]}
 					>
-						<span class="text-accent opacity-0 transition-opacity group-hover:opacity-100 group-aria-[current=page]:opacity-100">
+						<span class="hidden text-accent opacity-0 transition-opacity group-hover:opacity-100 group-aria-[current=page]:opacity-100 sm:inline">
 							/
 						</span>
 						{link.title.toLowerCase()}
