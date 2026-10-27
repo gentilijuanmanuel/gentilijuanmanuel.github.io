@@ -100,4 +100,11 @@
 		animation: none;
 		mix-blend-mode: normal;
 	}
+
+	/* Elements named for page-to-page morphs (the library's spines) would otherwise
+	   be captured as their own layers, outside the circle and unclipped by their
+	   scroll containers, so books scrolled out of view flash on screen. */
+	:root[data-theme-switch] * {
+		view-transition-name: none !important;
+	}
 </style>

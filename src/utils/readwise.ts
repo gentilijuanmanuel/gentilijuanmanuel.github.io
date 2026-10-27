@@ -412,7 +412,7 @@ export async function getHighlightPool(): Promise<Highlight[]> {
 				text: highlight.text,
 				title: book.title,
 				author: book.author,
-				url: `/library/${book.slug}`,
+				url: `/library/${book.slug}/`,
 			}))
 	);
 	if (candidates.length === 0) return [];
