@@ -9,7 +9,7 @@ The site sits between a paperback and a terminal.
 - **Light theme:** sepia paper, brown-black ink, burnt amber accents, a faint paper grain.
 - **Dark theme:** deep navy, cool ink and a periwinkle accent; reading cards blend into the page with a hairline border.
 - **Type:** [Newsreader](https://fonts.google.com/specimen/Newsreader) for reading, [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) for the interface.
-- **Details:** a library of every book read in Readwise (spines on yearly shelves, a page per book with selected passages), reading highlights rendered as book pages, a table-of-contents post index, an outline panel and reading progress on posts, a `⌘K` / `/` command palette, and an ink-spread theme switch.
+- **Details:** a library of every book read in Readwise (spines on shelves by subject, a page per book with selected passages), reading highlights rendered as book pages, a table-of-contents post index, an outline panel and reading progress on posts, a `⌘K` / `/` command palette, and an ink-spread theme switch.
 
 Design tokens live in `src/styles/global.css` (CSS variables for both themes) and are exposed to Tailwind in `tailwind.config.ts`.
 

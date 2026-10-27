@@ -8,17 +8,17 @@ export async function getStaticPaths(): Promise<GetStaticPathsResult> {
 	const library = await getLibrary();
 	return library.map((book, index) => ({
 		params: { slug: book.slug },
-		props: { book, newer: library[index - 1], older: library[index + 1] },
+		props: { book, previous: library[index - 1], next: library[index + 1] },
 	}));
 }
 
 interface Props {
 	book: LibraryBook;
-	newer?: LibraryBook;
-	older?: LibraryBook;
+	previous?: LibraryBook;
+	next?: LibraryBook;
 }
 
-const { book, newer, older } = Astro.props;
+const { book, previous, next } = Astro.props;
 
 const meta = {
 	title: book.title,
@@ -60,7 +60,7 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 
 		<div class="min-w-0">
 			<p class="reveal eyebrow" style="--i:1">
-				<span class="text-accent">//</span> shelf {book.year}
+				<span class="text-accent">//</span> shelf {book.shelf}
 			</p>
 			<h1
 				class="reveal mt-4 font-serif text-[2.4rem] font-normal leading-[1.08] tracking-tight text-ink sm:text-[3.2rem]"
@@ -81,7 +81,17 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 			>
 				<span>{book.highlightCount} {book.highlightCount === 1 ? "highlight" : "highlights"}</span>
 				<span aria-hidden="true" class="text-accent">◆</span>
-				<span>read {readingPeriod(book).toLowerCase()}</span>
+				<span>highlighted {readingPeriod(book).toLowerCase()}</span>
+				{
+					book.subjects.length > 0 && (
+						<>
+							<span aria-hidden="true" class="text-accent">
+								◆
+							</span>
+							<span>{book.subjects.join(" · ")}</span>
+						</>
+					)
+				}
 				<span class="flex items-center gap-x-3">
 					<span aria-hidden="true" class="text-accent">◆</span>
 					<a
@@ -144,38 +154,38 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 	</div>
 
 	{
-		(newer || older) && (
+		(previous || next) && (
 			<nav
 				aria-label="More books"
 				class="mt-24 grid gap-4 border-t border-line pt-8 sm:grid-cols-2"
 			>
-				{newer ? (
-					<a href={`/library/${newer.slug}`} class="neighbour group">
+				{previous ? (
+					<a href={`/library/${previous.slug}`} class="neighbour group">
 						<div class="w-12 shrink-0 overflow-hidden rounded-[2px] shadow-md">
-							<BookCover book={newer} />
+							<BookCover book={previous} />
 						</div>
 						<div class="min-w-0">
-							<p class="font-mono text-[0.6875rem] text-muted">← read after</p>
+							<p class="font-mono text-[0.6875rem] text-muted">← previous on the shelf</p>
 							<p class="mt-1 truncate font-serif text-lg text-ink transition-colors group-hover:text-accent">
-								{newer.title}
+								{previous.title}
 							</p>
 						</div>
 					</a>
 				) : (
 					<span />
 				)}
-				{older && (
+				{next && (
 					<a
-						href={`/library/${older.slug}`}
+						href={`/library/${next.slug}`}
 						class="neighbour group sm:flex-row-reverse sm:text-right"
 					>
 						<div class="w-12 shrink-0 overflow-hidden rounded-[2px] shadow-md">
-							<BookCover book={older} />
+							<BookCover book={next} />
 						</div>
 						<div class="min-w-0">
-							<p class="font-mono text-[0.6875rem] text-muted">read before →</p>
+							<p class="font-mono text-[0.6875rem] text-muted">next on the shelf →</p>
 							<p class="mt-1 truncate font-serif text-lg text-ink transition-colors group-hover:text-accent">
-								{older.title}
+								{next.title}
 							</p>
 						</div>
 					</a>
