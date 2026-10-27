@@ -25,7 +25,7 @@ const entries = [
 		kind: "book",
 		title: book.title,
 		hint: book.author ? `book · ${book.author}` : "book",
-		href: `/library/${book.slug}`,
+		href: `/library/${book.slug}/`,
 	})),
 ];
 const serialized = JSON.stringify(entries).replace(/</g, "\\u003c");

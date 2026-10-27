@@ -35,7 +35,7 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 
 <PageLayout meta={meta} wide>
 	<a
-		href="/library"
+		href="/library/"
 		class="reveal font-mono text-xs text-muted transition-colors hover:text-accent"
 		style="--i:0">← the library</a
 	>
@@ -160,7 +160,7 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 				class="mt-24 grid gap-4 border-t border-line pt-8 sm:grid-cols-2"
 			>
 				{previous ? (
-					<a href={`/library/${previous.slug}`} class="neighbour group">
+					<a href={`/library/${previous.slug}/`} rel="prefetch" class="neighbour group">
 						<div class="w-12 shrink-0 overflow-hidden rounded-[2px] shadow-md">
 							<BookCover book={previous} />
 						</div>
@@ -176,7 +176,8 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 				)}
 				{next && (
 					<a
-						href={`/library/${next.slug}`}
+						href={`/library/${next.slug}/`}
+						rel="prefetch"
 						class="neighbour group sm:flex-row-reverse sm:text-right"
 					>
 						<div class="w-12 shrink-0 overflow-hidden rounded-[2px] shadow-md">

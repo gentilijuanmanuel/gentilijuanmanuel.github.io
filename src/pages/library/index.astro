@@ -108,7 +108,7 @@ let spineIndex = 0;
 										{shelf.books.map((book) => (
 											<li class="flex items-end">
 												<a
-													href={`/library/${book.slug}`}
+													href={`/library/${book.slug}/`}
 													class="spine"
 													data-spine={book.slug}
 													data-search={[book.title, book.author, book.shelf, ...book.subjects].join(
@@ -190,9 +190,25 @@ let spineIndex = 0;
 		current = next;
 	};
 
+	// Pointing at a spine is a strong hint it's about to be opened, so its page
+	// starts downloading then, instead of on click.
+	const prefetched = new Set<string>();
+	const prefetch = (href: string) => {
+		if (prefetched.has(href)) return;
+		prefetched.add(href);
+		const link = document.createElement("link");
+		link.rel = "prefetch";
+		link.href = href;
+		document.head.append(link);
+	};
+
 	for (const spine of spines) {
-		spine.addEventListener("pointerenter", () => show(spine.dataset.spine));
-		spine.addEventListener("focus", () => show(spine.dataset.spine));
+		const onIntent = () => {
+			show(spine.dataset.spine);
+			prefetch(spine.href);
+		};
+		spine.addEventListener("pointerenter", onIntent);
+		spine.addEventListener("focus", onIntent);
 	}
 
 	// Filtering dims the books that don't match instead of removing them, so the
@@ -233,7 +249,10 @@ let spineIndex = 0;
 	/* Shelves scroll sideways on narrow screens. The top padding leaves room for
 	   a book being pulled up on hover. */
 	.shelf-scroll {
+		/* Without the explicit hidden, overflow-y computes to auto, and the leaning
+		   last book or a lifted one makes the shelf scroll vertically too. */
 		overflow-x: auto;
+		overflow-y: hidden;
 		padding-top: 1.5rem;
 		scrollbar-width: none;
 		mask-image: linear-gradient(
