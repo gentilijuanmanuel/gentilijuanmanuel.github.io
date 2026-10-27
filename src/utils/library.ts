@@ -16,6 +16,10 @@ const COVER_WIDTH = 480;
 /** Abort a single cover download that takes too long, so a slow store can't hang CI. */
 const COVER_TIMEOUT_MS = 20_000;
 
+/** Extra attempts for a cover download that fails, waiting 1s before the first and 2s before the second. */
+const COVER_RETRIES = 2;
+const COVER_RETRY_DELAY_MS = 1_000;
+
 /** Parallel cover downloads. */
 const COVER_CONCURRENCY = 6;
 
@@ -116,13 +120,29 @@ function isPlaceholderCover(url: string): boolean {
  */
 const GOOGLE_PLACEHOLDER = { width: 575, height: 750 };
 
-async function download(url: string): Promise<Buffer> {
+async function downloadOnce(url: string): Promise<Buffer> {
 	const response = await fetch(url, {
 		headers: { "User-Agent": "Mozilla/5.0 (library cover fetch)" },
 		signal: AbortSignal.timeout(COVER_TIMEOUT_MS),
 	});
 	if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
 	return Buffer.from(await response.arrayBuffer());
+}
+
+/**
+ * Some covers live on slow third-party hosts that now and then drop the
+ * connection or time out, so a failed download gets a couple more tries
+ * before the book falls back to a plain spine.
+ */
+async function download(url: string): Promise<Buffer> {
+	for (let attempt = 1; ; attempt++) {
+		try {
+			return await downloadOnce(url);
+		} catch (error) {
+			if (attempt > COVER_RETRIES) throw error;
+			await new Promise((resolve) => setTimeout(resolve, COVER_RETRY_DELAY_MS * attempt));
+		}
+	}
 }
 
 async function downloadCover(url: string): Promise<Buffer> {
