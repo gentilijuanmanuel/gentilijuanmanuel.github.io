@@ -1,5 +1,5 @@
 /**
- * The library: every book in Readwise, shelved by the year it was read.
+ * The library: every book in Readwise, shelved by subject.
  *
  * Built on top of `getBooks()` from `readwise.ts`. Covers are downloaded and
  * resized while the site builds, then served as static files from
@@ -26,6 +26,32 @@ const COVER_CONCURRENCY = 6;
  * Argentina's copyright law (Ley 11.723, art. 10).
  */
 export const WORD_BUDGET = 1000;
+
+/**
+ * The shelves, in the order they stand, like the sections of a real library.
+ * Each book stands on one shelf: the first of these it is tagged with in
+ * Readwise. Its other tags show as subjects on its page.
+ */
+export const SHELVES = [
+	"literature",
+	"essay",
+	"psychology",
+	"society",
+	"history",
+	"business",
+	"economy",
+	"productivity",
+	"craft",
+	"music",
+	"art",
+	"programming",
+] as const;
+
+/** Where untagged books go, so a new book shows up before it has been tagged. */
+const UNSHELVED = "miscellany";
+
+/** Tags that mark a book rather than describe it, so they never show as subjects. */
+const HIDDEN_TAGS = new Set(["favorite"]);
 
 /** Spines for books whose cover could not be used, picked per book from the slug. */
 const FALLBACK_SPINES = [
@@ -57,10 +83,13 @@ export interface LibraryBook {
 	highlightCount: number;
 	/** A selection of up to `WORD_BUDGET` words, in reading order. */
 	highlights: LibraryHighlight[];
+	/** When the first and latest highlights were made, not necessarily when the book was read. */
 	firstRead: Date;
 	lastRead: Date;
-	/** The shelf the book sits on: the year of its latest highlight. */
-	year: number;
+	/** The shelf the book stands on: one of `SHELVES`, or `UNSHELVED`. */
+	shelf: string;
+	/** The book's other tags. */
+	subjects: string[];
 	cover: { src: string; width: number; height: number } | null;
 	spine: { color: string; ink: string };
 }
@@ -159,6 +188,16 @@ async function loadCover(
 	}
 }
 
+function shelfOf(tags: readonly string[]): string {
+	return SHELVES.find((shelf) => tags.includes(shelf)) ?? UNSHELVED;
+}
+
+/** Shelf order, with the unshelved books last. */
+function shelfRank(shelf: string): number {
+	const index = (SHELVES as readonly string[]).indexOf(shelf);
+	return index === -1 ? SHELVES.length : index;
+}
+
 function formatLocation(highlight: BookHighlight): string | null {
 	if (highlight.location === null) return null;
 	if (highlight.locationType === "page") return `p. ${highlight.location}`;
@@ -250,6 +289,7 @@ async function buildLibrary(): Promise<LibraryBook[]> {
 		const firstRead = dates[0] ?? new Date(0);
 		const lastRead = dates[dates.length - 1] ?? firstRead;
 
+		const shelf = shelfOf(book.tags);
 		const { cover, spine, file } = await loadCover(book);
 		if (file) coverFiles.set(book.slug, file);
 
@@ -267,14 +307,17 @@ async function buildLibrary(): Promise<LibraryBook[]> {
 			})),
 			firstRead,
 			lastRead,
-			year: lastRead.getFullYear(),
+			shelf,
+			subjects: book.tags.filter((tag) => tag !== shelf && !HIDDEN_TAGS.has(tag)).sort(),
 			cover,
 			spine,
 		};
 	});
 
-	// Most recently read first, which is also the order of the shelves.
-	library.sort((a, b) => b.lastRead.getTime() - a.lastRead.getTime());
+	// Shelf by shelf, and on each shelf the most recently highlighted first.
+	library.sort(
+		(a, b) => shelfRank(a.shelf) - shelfRank(b.shelf) || b.lastRead.getTime() - a.lastRead.getTime()
+	);
 
 	if (library.length > 0) {
 		console.info(`[library] shelved ${library.length} books, ${coverFiles.size} with covers`);
@@ -282,7 +325,7 @@ async function buildLibrary(): Promise<LibraryBook[]> {
 	return library;
 }
 
-/** Every book, most recently read first. Shared across pages, so covers download once per build. */
+/** Every book, in shelf order. Shared across pages, so covers download once per build. */
 export function getLibrary(): Promise<LibraryBook[]> {
 	libraryPromise ??= buildLibrary();
 	return libraryPromise;
@@ -294,17 +337,19 @@ export async function getCoverFile(slug: string): Promise<Buffer | undefined> {
 	return coverFiles.get(slug);
 }
 
-/** Books grouped into shelves by year, newest shelf first. */
-export function shelvesByYear(
+/** Books grouped into shelves, in `SHELVES` order, skipping empty ones. */
+export function shelvesBySubject(
 	library: readonly LibraryBook[]
-): { year: number; books: LibraryBook[] }[] {
-	const shelves = new Map<number, LibraryBook[]>();
+): { shelf: string; books: LibraryBook[] }[] {
+	const shelves = new Map<string, LibraryBook[]>();
 	for (const book of library) {
-		const shelf = shelves.get(book.year);
-		if (shelf) shelf.push(book);
-		else shelves.set(book.year, [book]);
+		const books = shelves.get(book.shelf);
+		if (books) books.push(book);
+		else shelves.set(book.shelf, [book]);
 	}
-	return [...shelves.entries()].sort(([a], [b]) => b - a).map(([year, books]) => ({ year, books }));
+	return [...shelves.entries()]
+		.sort(([a], [b]) => shelfRank(a) - shelfRank(b))
+		.map(([shelf, books]) => ({ shelf, books }));
 }
 
 const monthYear = new Intl.DateTimeFormat("en-GB", { month: "short", year: "numeric" });

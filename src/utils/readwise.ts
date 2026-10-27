@@ -54,10 +54,15 @@ const MIN_TEXT_LENGTH = 40;
 const POOL_SIZE = 60;
 
 /**
- * Readwise's catch-all "book" for quotes pasted in by hand. It is not a book
- * anyone read, so it stays off the shelves and out of the pool.
+ * Entries that are not books anyone read, so they stay off the shelves and out
+ * of the pool: Readwise's catch-all "book" for quotes pasted in by hand, its
+ * onboarding guide, and a Blinkist summary.
  */
-const EXCLUDED_SLUGS = new Set(["quick-passages"]);
+const EXCLUDED_SLUGS = new Set([
+	"quick-passages",
+	"how-to-use-readwise",
+	"never-eat-alone-by-keith-ferrazzi",
+]);
 
 /**
  * Only book highlights are shown. Readwise also returns "articles", "tweets"
@@ -97,6 +102,8 @@ export interface Book {
 	coverUrl: string | null;
 	/** A public link for the book, so readers without a Readwise account can follow it. */
 	searchUrl: string;
+	/** The book's tags in Readwise, lowercase, which decide its shelf in the library. */
+	tags: string[];
 	highlights: BookHighlight[];
 }
 
@@ -119,6 +126,7 @@ interface ReadwiseBook {
 	author?: string | null;
 	category?: string | null;
 	cover_image_url?: string | null;
+	book_tags?: { name: string }[] | null;
 	is_deleted?: boolean;
 	highlights?: ReadwiseHighlight[];
 }
@@ -215,11 +223,15 @@ function toBooks(entries: readonly ReadwiseBook[]): Book[] {
 		const author = entry.author?.trim() || null;
 		const key = `${titleSlug}|${slugify(author ?? "")}`;
 		const coverUrl = entry.cover_image_url?.trim() || null;
+		const tags = (entry.book_tags ?? [])
+			.map((tag) => tag.name.trim().toLowerCase())
+			.filter(Boolean);
 
 		const existing = byKey.get(key);
 		if (existing) {
 			existing.highlights.push(...highlights);
 			existing.coverUrl ??= coverUrl;
+			existing.tags = [...new Set([...existing.tags, ...tags])];
 			continue;
 		}
 
@@ -231,6 +243,7 @@ function toBooks(entries: readonly ReadwiseBook[]): Book[] {
 			author,
 			coverUrl,
 			searchUrl: bookSearchUrl(title, author),
+			tags: [...new Set(tags)],
 			highlights,
 		});
 	}
