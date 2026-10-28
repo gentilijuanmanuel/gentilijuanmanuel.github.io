@@ -5,12 +5,14 @@ import "../styles/global.css";
 
 type Props = SiteMeta;
 
-const { title, description, articleDate } = Astro.props;
+const { title, description, ogImage, articleDate } = Astro.props;
 
 const titleSeparator = "•";
 const siteTitle = `${title} ${titleSeparator} ${siteConfig.title}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const socialImageURL = new URL("/social-card.png", Astro.url).href;
+// Posts pass one of their images; every other page shares the default card.
+const socialImageURL = new URL(ogImage ?? "/social-card.png", Astro.url).href;
+const socialImageAlt = ogImage ? title : `${siteConfig.author}, ${siteConfig.title}`;
 const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
 
@@ -55,8 +57,16 @@ const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 <meta property="og:site_name" content={siteConfig.title} />
 <meta property="og:locale" content={siteConfig.ogLocale} />
 <meta property="og:image" content={socialImageURL} />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
+{
+	// Only the default card's size is known; a post's own image has its own.
+	!ogImage && (
+		<>
+			<meta property="og:image:width" content="1200" />
+			<meta property="og:image:height" content="630" />
+		</>
+	)
+}
+<meta property="og:image:alt" content={socialImageAlt} />
 {
 	gaId && (
 		<>
@@ -95,6 +105,7 @@ const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={socialImageURL} />
+<meta name="twitter:image:alt" content={socialImageAlt} />
 
 <!-- RSS auto-discovery -->
 <link rel="alternate" type="application/rss+xml" title={siteConfig.title} href="/rss.xml" />
