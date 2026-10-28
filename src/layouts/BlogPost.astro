@@ -22,7 +22,10 @@ const {
 	data: { title, description, ogImage, publishDate, language },
 	slug,
 } = post;
-const socialImage = ogImage ?? `/og-image/${slug}.png`;
+// Link previews show the post's first image (HTML or Markdown), unless the
+// frontmatter picks one. Posts without images fall back to the site's card.
+const firstImage = post.body.match(/<img[^>]*?\ssrc="([^"]+)"|!\[[^\]]*\]\(([^)\s]+)/);
+const socialImage = ogImage ?? firstImage?.[1] ?? firstImage?.[2];
 const articleDate = publishDate.toISOString();
 const { headings } = await post.render();
 const outline = headings.filter(({ depth }) => depth <= 3);

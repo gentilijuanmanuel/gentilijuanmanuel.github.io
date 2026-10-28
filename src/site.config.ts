@@ -13,12 +13,12 @@ interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-	// Used as both a meta property (src/components/BaseHead.astro L:31 + L:49) & the generated satori png (src/pages/og-image/[slug].png.ts)
+	// Used as both a meta property (src/components/BaseHead.astro L:31 + L:49) & the default social card (src/utils/og.ts)
 	author: "Juan Manuel Gentili",
 	// Meta property used to construct the meta title property, found in src/components/BaseHead.astro L:11
 	title: "Juan's blog",
 	// Meta property used as a default description meta property
-	description: "This is my little corner of the internet, where I share whatever inspires me in the form of blog posts.",
+	description: "A human who writes in natural and programming languages.",
 	// HTML lang property, found in src/layouts/Base.astro L:18
 	lang: "en-GB",
 	// Meta property, found in src/components/BaseHead.astro L:42
