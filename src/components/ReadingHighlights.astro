@@ -9,12 +9,14 @@ const VISIBLE_COUNT = 3;
 const pool = await getHighlightPool();
 const highlights = pickFromDistinctBooks(pool, VISIBLE_COUNT);
 
+// Odd pages sit on the right of a spread (recto), even ones on the left (verso).
+// Without a page number, the cards alternate.
+const sideOf = (page: number | null, slot: number) =>
+	(page ?? slot + 1) % 2 === 1 ? "recto" : "verso";
+
 // Nothing to show (no token, or the API was unreachable): render nothing and
 // leave the rest of the Reading section untouched.
 if (highlights.length === 0) return;
-
-const sourceLabel = (title: string, author: string | null) =>
-	author ? `${title}, ${author}` : title;
 
 // `set:html` does not escape, and a highlight could legitimately contain the
 // closing sequence of the surrounding tag.
@@ -24,28 +26,32 @@ const serializedPool = JSON.stringify(pool).replace(/</g, "\\u003c");
 <div class="mt-10">
 	<ul id="readwise-highlights" class="space-y-8">
 		{
-			highlights.map((highlight, index) => (
+			highlights.map((highlight, slot) => (
 				<li
 					data-highlight
-					class="paper-page px-7 pb-6 pt-8 sm:px-10 sm:pb-8 sm:pt-10"
-					style={`rotate: ${[-0.4, 0.3, -0.2][index % 3]}deg`}
+					data-side={sideOf(highlight.page, slot)}
+					class="book-page px-7 pb-8 pt-5 sm:px-12 sm:pb-10 sm:pt-7"
 				>
 					<blockquote>
-						<p data-highlight-text class="paper-text text-[1.15rem] leading-[1.55] sm:text-[1.3rem]">
-							{highlight.text}
-						</p>
-						<footer class="mt-6 flex items-center justify-between gap-4 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-[--card-muted]">
+						<footer class="running-head">
+							<span data-highlight-page>{highlight.page ?? ""}</span>
 							<a
 								data-highlight-link
-								class="min-w-0 truncate transition-colors hover:text-accent"
+								class="transition-colors hover:text-accent"
 								href={highlight.url}
 							>
-								<cite data-highlight-source class="not-italic">
-									{sourceLabel(highlight.title, highlight.author)}
-								</cite>
+								<cite data-highlight-source>{highlight.title}</cite>
+								<span data-highlight-author class="small-caps" hidden={!highlight.author}>
+									· {highlight.author}
+								</span>
 							</a>
-							<span aria-hidden="true" class="shrink-0">❦</span>
 						</footer>
+						<p
+							data-highlight-text
+							class="paper-text mt-6 text-[1.075rem] leading-[1.65] sm:text-[1.175rem]"
+						>
+							{highlight.text}
+						</p>
 					</blockquote>
 				</li>
 			))
@@ -106,12 +112,17 @@ const serializedPool = JSON.stringify(pool).replace(/</g, "\\u003c");
 				var text = item.querySelector("[data-highlight-text]");
 				var source = item.querySelector("[data-highlight-source]");
 				var link = item.querySelector("[data-highlight-link]");
+				var page = item.querySelector("[data-highlight-page]");
+				var author = item.querySelector("[data-highlight-author]");
 
 				if (text) text.textContent = highlight.text;
-				if (source) {
-					source.textContent = highlight.author
-						? highlight.title + ", " + highlight.author
-						: highlight.title;
+				if (source) source.textContent = highlight.title;
+				if (page) page.textContent = highlight.page == null ? "" : String(highlight.page);
+				item.dataset.side =
+					(highlight.page == null ? position + 1 : highlight.page) % 2 === 1 ? "recto" : "verso";
+				if (author) {
+					author.textContent = highlight.author ? "· " + highlight.author : "";
+					author.hidden = !highlight.author;
 				}
 				if (link) link.href = highlight.url;
 			}

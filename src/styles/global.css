@@ -10,6 +10,8 @@
 		color-scheme: light;
 		--font-serif: "Newsreader", ui-serif, Georgia, serif;
 		--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+		/* A 19th-century book face, for the pages quoted on the homepage. */
+		--font-book: "Old Standard TT", "Iowan Old Style", Georgia, serif;
 
 		--theme-bg: #f3ead6;
 		--theme-elev: #ebdfc4;
@@ -152,13 +154,143 @@
 		transform: translateY(-3px) rotate(-0.15deg);
 	}
 
+	/* A page from an old book, lying on the site's own paper. The page is drawn,
+	   not photographed, so it holds at any size: a stock a shade lighter than the
+	   background, fine fibres, uneven toning and a few foxing specks, with the
+	   ageing kept to the edges. What makes it read as a physical page:
+	   - the paper sits on ::before, roughened by the #page-edge SVG filter so its
+	     edges aren't ruler-straight, while the text above it stays crisp;
+	   - the gutter, the shade where a page curves into the binding, on the spine
+	     side: the left of a recto (odd) page, the right of a verso (even) one;
+	   - corners lifting off the desk, from the shadows on ::after.
+	   Used for the homepage quote and reading highlights. */
+	.book-page {
+		--page-ink: #2b2217;
+		--page-muted: rgb(43 34 23 / 0.56);
+		--page-stock: #f8f1df;
+		--page-gutter: rgb(110 74 30 / 0.16);
+		--page-corner-shadow: rgb(60 40 15 / 0.45);
+		--page-gutter-side: 90deg;
+		position: relative;
+		isolation: isolate;
+		color: var(--page-ink);
+	}
+
+	.book-page[data-side="verso"] {
+		--page-gutter-side: 270deg;
+	}
+
+	.book-page::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background-color: var(--page-stock);
+		background-image:
+			/* Gutter: the page curving into the binding. */
+			linear-gradient(var(--page-gutter-side), var(--page-gutter), transparent 7%),
+			/* Vignette: the edges age first. */
+			radial-gradient(ellipse 90% 85% at 50% 45%, transparent 58%, rgb(140 98 45 / 0.11) 100%),
+			/* A faint band of toning along each edge. */
+			linear-gradient(90deg, rgb(140 98 45 / 0.06), transparent 6%, transparent 94%, rgb(140 98 45 / 0.06)),
+			/* Foxing: sparse brown specks. */
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='f' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.27 0 0 0 0 0.12 0 0 0 9 -7.6'/></filter><rect width='100%' height='100%' filter='url(%23f)' opacity='0.35'/></svg>"),
+			/* Uneven toning across the sheet. */
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='t' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='0.006' numOctaves='3' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.38 0 0 0 0 0.16 0 0 0 0.3 -0.09'/></filter><rect width='100%' height='100%' filter='url(%23t)'/></svg>"),
+			/* Paper fibres. */
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.32 0 0 0 0 0.16 0 0 0 0.14 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+		border-radius: 3px 5px 4px 6px / 5px 3px 6px 4px;
+		box-shadow: inset 0 0 0 1px rgb(120 84 40 / 0.07), 0 1px 1px rgb(60 40 15 / 0.05);
+		filter: url(#page-edge);
+	}
+
+	/* The bottom corners curl up off the desk, so their shadows run deeper than
+	   the middle's. */
+	.book-page::after {
+		content: "";
+		position: absolute;
+		inset: auto 1% -5px;
+		height: 1.75rem;
+		z-index: -2;
+		background:
+			radial-gradient(closest-side, var(--page-corner-shadow), transparent) left bottom / 38% 100% no-repeat,
+			radial-gradient(closest-side, var(--page-corner-shadow), transparent) right bottom / 38% 100% no-repeat;
+		filter: blur(7px);
+	}
+
+	/* Night mode: its own page rather than a dimmed day one. Ink-blue stock a
+	   step above the background, a faint cool light falling from the top, edges
+	   sinking into the dark, and a light grain in place of brown fibres. */
+	:root.dark .book-page {
+		--page-ink: #cdd5e4;
+		--page-muted: #7f8ca8;
+		--page-stock: #0f1729;
+		--page-gutter: rgb(3 7 18 / 0.5);
+		--page-corner-shadow: rgb(0 0 0 / 0.75);
+	}
+
+	:root.dark .book-page::before {
+		background-image:
+			linear-gradient(var(--page-gutter-side), var(--page-gutter), transparent 7%),
+			/* Light from above, as from a window. */
+			radial-gradient(ellipse 80% 70% at 50% 0%, rgb(143 168 232 / 0.07), transparent 70%),
+			/* Vignette: the edges sink into the dark. */
+			radial-gradient(ellipse 90% 85% at 50% 45%, transparent 55%, rgb(0 0 0 / 0.32) 100%),
+			/* Uneven tone across the sheet. */
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='t' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='0.006' numOctaves='3' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.62 0 0 0 0 0.8 0 0 0 0.08 -0.02'/></filter><rect width='100%' height='100%' filter='url(%23t)'/></svg>"),
+			/* Grain. */
+			url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.8 0 0 0 0 0.85 0 0 0 0 0.95 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+		box-shadow: inset 0 0 0 1px rgb(143 168 232 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.04);
+	}
+
+	/* The line above the text: title and author centred, the page number on the
+	   outer edge, as printed books do. */
+	.running-head {
+		display: grid;
+		grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+		align-items: baseline;
+		gap: 0.75rem;
+		font-family: var(--font-book);
+		font-size: 0.875rem;
+		color: var(--page-muted);
+	}
+
+	.running-head > :first-child {
+		grid-row: 1;
+		grid-column: 3;
+		text-align: right;
+	}
+
+	[data-side="verso"] .running-head > :first-child {
+		grid-column: 1;
+		text-align: left;
+	}
+
+	.running-head > :nth-child(2) {
+		grid-row: 1;
+		grid-column: 2;
+		text-align: center;
+		text-wrap: balance;
+	}
+
+	/* Author names in a running head are set in small caps. */
+	.small-caps {
+		font-variant: small-caps;
+		letter-spacing: 0.06em;
+	}
+
+	:root.dark .paper-text {
+		text-shadow: none;
+	}
+
 	.paper-text {
-		font-family: var(--font-serif);
+		font-family: var(--font-book);
+		/* Ink pressed into paper spreads a hair. Not at night, where it would glow. */
+		text-shadow: 0 0 0.5px rgb(43 34 23 / 0.35);
 		text-align: justify;
 		text-indent: 1.6em;
 		hyphens: auto;
 		-webkit-hyphens: auto;
-		font-variation-settings: "opsz" 16;
 	}
 
 	/* Blinking block cursor */

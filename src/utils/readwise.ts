@@ -79,6 +79,8 @@ export interface Highlight {
 	text: string;
 	title: string;
 	author: string | null;
+	/** The page it was highlighted on, when the source records pages (most Kindle books record locations instead). */
+	page: number | null;
 	/** The book's page in the library. */
 	url: string;
 }
@@ -412,6 +414,7 @@ export async function getHighlightPool(): Promise<Highlight[]> {
 				text: highlight.text,
 				title: book.title,
 				author: book.author,
+				page: highlight.locationType === "page" ? highlight.location : null,
 				url: `/library/${book.slug}/`,
 			}))
 	);
