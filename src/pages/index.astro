@@ -60,19 +60,31 @@ const allPostsByDate = sortMDByDate(englishPosts).slice(0, MAX_POSTS);
 			<SocialList />
 		</div>
 
-		<figure class="paper-page reveal mt-14 px-7 pb-7 pt-9 sm:px-12 sm:pb-9 sm:pt-12" style="--i:4">
-			<blockquote>
-				<p class="paper-text text-[1.35rem] leading-[1.45] sm:text-[1.6rem]">
+		<!-- Roughens the edges of the book pages below (see .book-page::before in global.css). -->
+		<svg aria-hidden="true" width="0" height="0" class="absolute">
+			<filter id="page-edge" x="-2%" y="-4%" width="104%" height="108%">
+				<feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="4"
+				></feTurbulence>
+				<feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"
+				></feDisplacementMap>
+			</filter>
+		</svg>
+
+		<figure
+			class="book-page reveal mt-14 px-7 pb-9 pt-6 sm:px-14 sm:pb-12 sm:pt-8"
+			data-side="recto"
+			style="--i:4"
+		>
+			<figcaption class="running-head">
+				<span>1</span>
+				<span class="small-caps">Bob Dylan</span>
+			</figcaption>
+			<blockquote class="mt-7">
+				<p class="paper-text text-[1.25rem] leading-[1.55] sm:text-[1.45rem]">
 					Life isn't about finding yourself, or finding anything. Life is about creating yourself.
 					And creating things.
 				</p>
 			</blockquote>
-			<figcaption
-				class="mt-6 flex items-center justify-between font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-[--card-muted]"
-			>
-				<span>— Bob Dylan</span>
-				<span aria-hidden="true">p. 1</span>
-			</figcaption>
 		</figure>
 	</section>
 
