@@ -246,14 +246,19 @@ const depth = Math.min(46, Math.max(18, Math.round(12 + Math.sqrt(book.highlight
 		);
 	}
 
+	/* The fore-edge sits flush with the cover's edge, so as the book turns the
+	   strip of pages narrows smoothly to nothing instead of popping in and out of
+	   a gap. The page lines are low contrast: seen nearly edge-on the strip is a
+	   pixel or two wide, and stark 1px stripes would flicker between light and
+	   dark as it turns. */
 	.book3d-pages {
 		position: absolute;
 		top: 3px;
 		bottom: 3px;
-		left: calc(100% - var(--depth) / 2 - 4px);
+		left: calc(100% - var(--depth) / 2 - 1px);
 		width: var(--depth);
 		transform: rotateY(90deg);
-		background: repeating-linear-gradient(90deg, #f7f0e1 0 1px, #ddd0b6 1px 2px);
+		background: repeating-linear-gradient(90deg, #eee5d1 0 1px, #e3d7bd 1px 2px);
 		box-shadow: inset 0 0 6px rgb(0 0 0 / 0.15);
 	}
 
